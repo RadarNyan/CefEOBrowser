@@ -11,7 +11,7 @@
     <ProjectGuid>{C79E2829-366B-4CFE-BEF9-E93597D5FEB8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>CefEOBrowser</RootNamespace>
-    <AssemblyName>CefEOBrowser</AssemblyName>
+    <AssemblyName>EOBrowser</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -62,8 +62,12 @@
     <CefSharpTargetDir>CefEOBrowser\bin</CefSharpTargetDir>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BrowserLib">
+      <HintPath>..\Reference-74EO\BrowserLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

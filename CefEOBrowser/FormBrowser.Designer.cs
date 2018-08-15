@@ -38,6 +38,7 @@
             this.Name = "FormBrowser";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBrowser_FormClosing);
+            this.Load += new System.EventHandler(this.FormBrowser_Load);
             this.ResumeLayout(false);
 
         }
