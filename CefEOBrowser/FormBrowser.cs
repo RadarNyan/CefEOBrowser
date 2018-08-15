@@ -154,7 +154,18 @@ namespace CefEOBrowser
 
         private void BrowserHostChannel_Faulted(Exception e)
         {
-            throw new NotImplementedException();
+            // 親と通信できなくなったら終了する
+            Exit();
+        }
+
+        private void Exit()
+        {
+            if (!BrowserHost.Closed)
+            {
+                BrowserHost.Close();
+                HeartbeatTimer.Stop();
+                Application.Exit();
+            }
         }
     }
 }
