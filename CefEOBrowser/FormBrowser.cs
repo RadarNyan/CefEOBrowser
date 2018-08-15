@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace CefEOBrowser
 {
-    public partial class Form1 : Form
+    public partial class FormBrowser : Form
     {
-        public Form1()
+        public FormBrowser()
         {
             InitializeComponent();
         }

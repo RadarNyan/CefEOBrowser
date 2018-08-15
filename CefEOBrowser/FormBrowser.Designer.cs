@@ -1,6 +1,6 @@
 ﻿namespace CefEOBrowser
 {
-    partial class Form1
+    partial class FormBrowser
     {
         /// <summary>
         /// Required designer variable.
