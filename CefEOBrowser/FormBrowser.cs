@@ -14,18 +14,21 @@ using CefSharp;
 using CefSharp.WinForms;
 using BrowserLib;
 using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
 namespace CefEOBrowser
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public partial class FormBrowser : Form, BrowserLib.IBrowser
     {
-        public ChromiumWebBrowser chromeBrowser;
+        public ChromiumWebBrowser Browser;
         private string cef_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CefEOBrowser");
+        private bool Cef_started = false;
 
-        private void InitializeChromium()
+        private void InitializeChromium(string proxy, string url)
         {
             CefLibraryHandle libraryLoader = new CefLibraryHandle(Path.Combine(cef_path, @"bin\libcef.dll"));
+
             CefSettings settings = new CefSettings();
             settings.CachePath = Path.Combine(cef_path, @"cache");
             settings.UserDataPath = Path.Combine(cef_path, @"userdata");
@@ -33,13 +36,19 @@ namespace CefEOBrowser
             settings.LocalesDirPath = Path.Combine(cef_path, @"bin\locales");
             settings.BrowserSubprocessPath = Path.Combine(cef_path, @"bin\CefSharp.BrowserSubprocess.exe");
             settings.LogSeverity = LogSeverity.Disable;
+            settings.CefCommandLineArgs.Add("proxy-server", proxy);
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
 
-            chromeBrowser = new ChromiumWebBrowser("https://github.com/cefsharp/CefSharp");
-            this.Controls.Add(chromeBrowser);
-            chromeBrowser.Dock = DockStyle.Fill;
+            Browser = new ChromiumWebBrowser(url);
+            this.SizeAdjuster.Controls.Add(Browser);
+            Browser.Dock = DockStyle.Fill;
+            Cef_started = true;
+
             libraryLoader.Dispose();
         }
+
+        private readonly Size KanColleSize = new Size(800, 480);
+        private bool RestoreStyleSheet = false;
 
         // FormBrowserHostの通信サーバ
         private string ServerUri;
@@ -53,11 +62,145 @@ namespace CefEOBrowser
         private Timer HeartbeatTimer = new Timer();
         private IntPtr HostWindow;
 
+        private bool _styleSheetApplied;
+        /// <summary>
+        /// スタイルシートの変更が適用されているか
+        /// </summary>
+        private bool StyleSheetApplied
+        {
+            get { return _styleSheetApplied; }
+            set
+            {
+
+                if (value)
+                {
+                    //Browser.Anchor = AnchorStyles.None;
+                    ApplyZoom();
+                    SizeAdjuster_SizeChanged(null, new EventArgs());
+
+                }
+                else
+                {
+                    SizeAdjuster.SuspendLayout();
+                    //Browser.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                    Browser.Location = new Point(0, 0);
+                    Browser.MinimumSize = new Size(0, 0);
+                    Browser.Size = SizeAdjuster.Size;
+                    SizeAdjuster.ResumeLayout();
+                }
+
+                _styleSheetApplied = value;
+            }
+        }
+
+        private void SizeAdjuster_SizeChanged(object p, EventArgs eventArgs)
+        {
+            if (!StyleSheetApplied)
+            {
+                Browser.Location = new Point(0, 0);
+                Browser.Size = SizeAdjuster.Size;
+                return;
+            }
+
+            ApplyZoom();
+        }
+
+        /// <summary>
+        /// 艦これが読み込まれているかどうか
+        /// </summary>
+        private bool IsKanColleLoaded { get; set; }
+
+        private VolumeManager _volumeManager;
+
+        private string _lastScreenShotPath;
+
+        private NumericUpDown ToolMenu_Other_Volume_VolumeControl
+        {
+            get { return (NumericUpDown)((ToolStripControlHost)ToolMenu_Other_Volume.DropDownItems["ToolMenu_Other_Volume_VolumeControlHost"]).Control; }
+        }
+
+        private PictureBox ToolMenu_Other_LastScreenShot_Control
+        {
+            get { return (PictureBox)((ToolStripControlHost)ToolMenu_Other_LastScreenShot.DropDownItems["ToolMenu_Other_LastScreenShot_ImageHost"]).Control; }
+        }
+
         public FormBrowser(string serverUri)
         {
             ServerUri = serverUri;
+
             InitializeComponent();
-            InitializeChromium();
+            this.ToolMenu.Renderer = new ToolStripOverride(); // remove stupid rounded corner
+
+            _volumeManager = new VolumeManager((uint)System.Diagnostics.Process.GetCurrentProcess().Id);
+
+            // 音量設定用コントロールの追加
+            {
+                var control = new NumericUpDown();
+                control.Name = "ToolMenu_Other_Volume_VolumeControl";
+                control.Maximum = 100;
+                control.TextAlign = HorizontalAlignment.Right;
+                control.Font = ToolMenu_Other_Volume.Font;
+
+                control.ValueChanged += ToolMenu_Other_Volume_ValueChanged;
+                control.Tag = false;
+
+                var host = new ToolStripControlHost(control, "ToolMenu_Other_Volume_VolumeControlHost");
+
+                control.Size = new Size(host.Width - control.Margin.Horizontal, host.Height - control.Margin.Vertical);
+                control.Location = new Point(control.Margin.Left, control.Margin.Top);
+
+
+                ToolMenu_Other_Volume.DropDownItems.Add(host);
+            }
+
+            // スクリーンショットプレビューコントロールの追加
+            {
+                double zoomrate = 0.5;
+                var control = new PictureBox();
+                control.Name = "ToolMenu_Other_LastScreenShot_Image";
+                control.SizeMode = PictureBoxSizeMode.Zoom;
+                control.Size = new Size((int)(KanColleSize.Width * zoomrate), (int)(KanColleSize.Height * zoomrate));
+                control.Margin = new Padding();
+                control.Image = new Bitmap((int)(KanColleSize.Width * zoomrate), (int)(KanColleSize.Height * zoomrate), PixelFormat.Format24bppRgb);
+                using (var g = Graphics.FromImage(control.Image))
+                {
+                    g.Clear(SystemColors.Control);
+                    g.DrawString("スクリーンショットをまだ撮影していません。\r\n", Font, Brushes.Black, new Point(4, 4));
+                }
+
+                var host = new ToolStripControlHost(control, "ToolMenu_Other_LastScreenShot_ImageHost");
+
+                host.Size = new Size(control.Width + control.Margin.Horizontal, control.Height + control.Margin.Vertical);
+                host.AutoSize = false;
+                control.Location = new Point(control.Margin.Left, control.Margin.Top);
+
+                host.Click += ToolMenu_Other_LastScreenShot_ImageHost_Click;
+
+                ToolMenu_Other_LastScreenShot.DropDownItems.Insert(0, host);
+            }
+        }
+
+        private void ToolMenu_Other_LastScreenShot_ImageHost_Click(object sender, EventArgs e)
+        {
+            if (_lastScreenShotPath != null && System.IO.File.Exists(_lastScreenShotPath))
+                System.Diagnostics.Process.Start(_lastScreenShotPath);
+        }
+
+        private void ToolMenu_Other_Volume_ValueChanged(object sender, EventArgs e)
+        {
+            var control = ToolMenu_Other_Volume_VolumeControl;
+
+            try
+            {
+                if ((bool)control.Tag)
+                    _volumeManager.Volume = (float)(control.Value / 100);
+                control.BackColor = SystemColors.Window;
+
+            }
+            catch (Exception)
+            {
+                control.BackColor = Color.MistyRose;
+            }
         }
 
         private void FormBrowser_FormClosing(object sender, FormClosingEventArgs e)
@@ -72,52 +215,378 @@ namespace CefEOBrowser
 
         public void InitialAPIReceived()
         {
-            throw new NotImplementedException();
+            IsKanColleLoaded = true;
+
+            //ロード直後の適用ではレイアウトがなぜか崩れるのでこのタイミングでも適用
+            ApplyStyleSheet();
+            ApplyZoom();
+            DestroyDMMreloadDialog();
+
+            //起動直後はまだ音声が鳴っていないのでミュートできないため、この時点で有効化
+            SetVolumeState();
         }
 
         public void SaveScreenShot()
         {
-            throw new NotImplementedException();
+            int savemode = Configuration.ScreenShotSaveMode;
+            int format = Configuration.ScreenShotFormat;
+            string folderPath = Configuration.ScreenShotPath;
+            bool is32bpp = format != 1 && Configuration.AvoidTwitterDeterioration;
+
+            using (var image = TakeScreenShot(is32bpp))
+            {
+
+                if (image == null)
+                    return;
+
+                // to file
+                if ((savemode & 1) != 0)
+                {
+                    try
+                    {
+
+                        if (!System.IO.Directory.Exists(folderPath))
+                        {
+                            System.IO.Directory.CreateDirectory(folderPath);
+                        }
+
+                        string ext;
+                        System.Drawing.Imaging.ImageFormat imgFormat;
+
+                        switch (format)
+                        {
+                            case 1:
+                                ext = "jpg";
+                                imgFormat = System.Drawing.Imaging.ImageFormat.Jpeg;
+                                break;
+                            case 2:
+                            default:
+                                ext = "png";
+                                imgFormat = System.Drawing.Imaging.ImageFormat.Png;
+                                break;
+                        }
+
+                        string path = string.Format("{0}\\{1:yyyyMMdd_HHmmssff}.{2}", folderPath, DateTime.Now, ext);
+                        image.Save(path, imgFormat);
+                        _lastScreenShotPath = path;
+
+                        AddLog(2, string.Format("スクリーンショットを {0} に保存しました。", path));
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        SendErrorReport(ex.ToString(), "スクリーンショットの保存に失敗しました。");
+                    }
+                }
+
+
+                // to clipboard
+                if ((savemode & 2) != 0)
+                {
+                    try
+                    {
+
+                        Clipboard.SetImage(image);
+
+                        if ((savemode & 3) != 3)
+                            AddLog(2, "スクリーンショットをクリップボードにコピーしました。");
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        SendErrorReport(ex.ToString(), "スクリーンショットのクリップボードへのコピーに失敗しました。");
+                    }
+                }
+            }
+        }
+
+
+
+        private Bitmap TakeScreenShot(bool is32bpp)
+        {
+            // throw new NotImplementedException();
+            return new Bitmap(100, 100, is32bpp ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
         }
 
         public void RefreshBrowser()
         {
-            throw new NotImplementedException();
+            if (!Configuration.AppliesStyleSheet)
+                StyleSheetApplied = false;
+
+            Browser.Reload();
         }
 
         public void ApplyZoom()
         {
-            throw new NotImplementedException();
+            int zoomRate = Configuration.ZoomRate;
+            bool fit = Configuration.ZoomFit && StyleSheetApplied;
+
+            try
+            {
+                /*
+                var wb = Browser.ActiveXInstance as SHDocVw.IWebBrowser2;
+                if (wb == null || wb.ReadyState == SHDocVw.tagREADYSTATE.READYSTATE_UNINITIALIZED || wb.Busy) return;
+
+                double zoomFactor;
+                object pin;
+
+                if (fit)
+                {
+                    pin = 100;
+                    double rateX = (double)SizeAdjuster.Width / KanColleSize.Width;
+                    double rateY = (double)SizeAdjuster.Height / KanColleSize.Height;
+                    zoomFactor = Math.Min(rateX, rateY);
+                }
+                else
+                {
+                    if (zoomRate < 10)
+                        zoomRate = 10;
+                    if (zoomRate > 1000)
+                        zoomRate = 1000;
+
+                    pin = zoomRate;
+                    zoomFactor = zoomRate / 100.0;
+                }
+
+                object pout = null;
+                wb.ExecWB(SHDocVw.OLECMDID.OLECMDID_OPTICAL_ZOOM, SHDocVw.OLECMDEXECOPT.OLECMDEXECOPT_DODEFAULT, ref pin, ref pout);
+
+                if (StyleSheetApplied)
+                {
+                    Browser.Size = Browser.MinimumSize = new Size(
+                        (int)(KanColleSize.Width * zoomFactor),
+                        (int)(KanColleSize.Height * zoomFactor)
+                        );
+                    CenteringBrowser();
+                }*/
+
+                if (fit)
+                {
+                    ToolMenu_Other_Zoom_Current.Text = string.Format("現在: ぴったり");
+                }
+                else
+                {
+                    ToolMenu_Other_Zoom_Current.Text = string.Format("現在: {0}%", zoomRate);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                AddLog(3, "ズームの適用に失敗しました。" + ex.Message);
+            }
         }
 
         public void Navigate(string url)
         {
-            throw new NotImplementedException();
+            Browser.Load(url);
         }
 
         public void SetProxy(string proxy)
         {
-            throw new NotImplementedException();
+            ushort port;
+            string proxy_cef;
+            if(ushort.TryParse(proxy, out port)){
+                proxy_cef = "http=127.0.0.1:" + port;
+            } else {
+                proxy_cef = proxy;
+            }
+
+            //AddLog(2, "[CefEOBrowser] Proxy " + proxy);
+            //AddLog(2, "[CefEOBrowser] Proxy_cef " + proxy_cef);
+            //AddLog(2, "[CefEOBrowser] Page " + Configuration.LogInPageURL);
+
+            if (Cef_started)
+            {
+                MessageBox.Show("実行中のプロキシ設定の変更はサポートされていません。\r\n七四式電子観測儀を再起動してください。", "CefEOBrowser");
+                Cef.Shutdown();
+            }
+            else
+            {
+                // Start Cef Browser
+                if (Configuration.IsEnabled)
+                {
+                    InitializeChromium(proxy_cef, Configuration.LogInPageURL);
+                }
+                else
+                {
+                    InitializeChromium(proxy_cef, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CefEOBrowser\html\default.htm"));
+                }
+            }
+
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.SetProxyCompleted());
         }
 
         public void ApplyStyleSheet()
         {
-            throw new NotImplementedException();
+            if (!Configuration.AppliesStyleSheet && !RestoreStyleSheet)
+                return;
+
+            try
+            {
+                /*
+                var document = Browser.Document;
+                if (document == null) return;
+
+                if (document.Url.ToString().Contains(".swf?"))
+                {
+
+                    document.InvokeScript("eval", new object[] { "document.body.style.margin=0;" });
+
+                }
+                else
+                {
+                    var swf = getFrameElementById(document, "externalswf");
+                    if (swf == null) return;
+
+                    if (RestoreStyleSheet)
+                    {
+                        document.InvokeScript("eval", new object[] { string.Format(RestoreScript, StyleClassID) });
+                        swf.Document.InvokeScript("eval", new object[] { string.Format(RestoreScript, StyleClassID) });
+                        StyleSheetApplied = false;
+                        RestoreStyleSheet = false;
+                        return;
+                    }
+                    // InvokeScriptは関数しか呼べないようなので、スクリプトをevalで渡す
+                    document.InvokeScript("eval", new object[] { string.Format(Properties.Resources.PageScript, StyleClassID) });
+                    swf.Document.InvokeScript("eval", new object[] { string.Format(Properties.Resources.FrameScript, StyleClassID) });
+                }
+                */
+
+                StyleSheetApplied = true;
+            }
+            catch (Exception ex)
+            {
+                SendErrorReport(ex.ToString(), "スタイルシートの適用に失敗しました。");
+            }
         }
 
         public void DestroyDMMreloadDialog()
         {
-            throw new NotImplementedException();
+            if (!Configuration.IsDMMreloadDialogDestroyable)
+                return;
+
+            try
+            {
+                /*
+                var document = Browser.Document;
+                if (document == null) return;
+
+                var swf = getFrameElementById(document, "externalswf");
+                if (swf == null) return;
+
+                document.InvokeScript("eval", new object[] { Properties.Resources.DMMScript });
+                */
+            }
+            catch (Exception ex)
+            {
+                SendErrorReport(ex.ToString(), "DMMによるページ更新ダイアログの非表示に失敗しました。");
+            }
         }
 
         public void CloseBrowser()
         {
-            throw new NotImplementedException();
+            HeartbeatTimer.Stop();
+            // リモートコールでClose()呼ぶのばヤバそうなので非同期にしておく
+            BeginInvoke((Action)(() => Exit()));
         }
 
         public void SetIconResource(byte[] canvas)
         {
-            throw new NotImplementedException();
+            string[] keys = new string[] {
+                "Browser_ScreenShot",
+                "Browser_Zoom",
+                "Browser_ZoomIn",
+                "Browser_ZoomOut",
+                "Browser_Unmute",
+                "Browser_Mute",
+                "Browser_Refresh",
+                "Browser_Navigate",
+                "Browser_Other",
+            };
+            int unitsize = 16 * 16 * 4;
+
+            for (int i = 0; i < keys.Length; i++)
+            {
+                Bitmap bmp = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+
+                if (canvas != null)
+                {
+                    BitmapData bmpdata = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                    Marshal.Copy(canvas, unitsize * i, bmpdata.Scan0, unitsize);
+                    bmp.UnlockBits(bmpdata);
+                }
+
+                Icons.Images.Add(keys[i], bmp);
+            }
+
+
+            ToolMenu_ScreenShot.Image = ToolMenu_Other_ScreenShot.Image =
+                Icons.Images["Browser_ScreenShot"];
+            ToolMenu_Zoom.Image = ToolMenu_Other_Zoom.Image =
+                Icons.Images["Browser_Zoom"];
+            ToolMenu_Other_Zoom_Increment.Image =
+                Icons.Images["Browser_ZoomIn"];
+            ToolMenu_Other_Zoom_Decrement.Image =
+                Icons.Images["Browser_ZoomOut"];
+            ToolMenu_Refresh.Image = ToolMenu_Other_Refresh.Image =
+                Icons.Images["Browser_Refresh"];
+            ToolMenu_NavigateToLogInPage.Image = ToolMenu_Other_NavigateToLogInPage.Image =
+                Icons.Images["Browser_Navigate"];
+            ToolMenu_Other.Image =
+                Icons.Images["Browser_Other"];
+
+            SetVolumeState();
+        }
+
+        private void SetVolumeState()
+        {
+            bool mute;
+            float volume;
+
+            try
+            {
+                mute = _volumeManager.IsMute;
+                volume = _volumeManager.Volume * 100;
+
+            }
+            catch (Exception)
+            {
+                // 音量データ取得不能時
+                mute = false;
+                volume = 100;
+            }
+
+            ToolMenu_Mute.Image = ToolMenu_Other_Mute.Image =
+                Icons.Images[mute ? "Browser_Mute" : "Browser_Unmute"];
+
+            {
+                var control = ToolMenu_Other_Volume_VolumeControl;
+                control.Tag = false;
+                control.Value = (decimal)volume;
+                control.Tag = true;
+            }
+
+            Configuration.Volume = volume;
+            Configuration.IsMute = mute;
+            ConfigurationUpdated();
+        }
+
+        private void ConfigurationUpdated()
+        {
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.ConfigurationUpdated(Configuration));
+        }
+
+        private void AddLog(int priority, string message)
+        {
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.AddLog(priority, message));
+        }
+
+        private void SendErrorReport(string exceptionName, string message)
+        {
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.SendErrorReport(exceptionName, message));
         }
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLongA", SetLastError = true)]
@@ -166,6 +635,37 @@ namespace CefEOBrowser
                 HeartbeatTimer.Stop();
                 Application.Exit();
             }
+        }
+    }
+
+    public class ToolStripOverride : ToolStripProfessionalRenderer
+    {
+        public ToolStripOverride()
+        {
+            this.RoundedEdges = false;
+        }
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
+    }
+
+    /// <summary>
+    /// ウィンドウが非アクティブ状態から1回のクリックでボタンが押せる ToolStrip です。
+    /// </summary>
+    internal class ExtraToolStrip : ToolStrip
+    {
+        public ExtraToolStrip() : base() { }
+
+        private const uint WM_MOUSEACTIVATE = 0x21;
+        private const uint MA_ACTIVATE = 1;
+        private const uint MA_ACTIVATEANDEAT = 2;
+        private const uint MA_NOACTIVATE = 3;
+        private const uint MA_NOACTIVATEANDEAT = 4;
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+
+            if (m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
+                m.Result = (IntPtr)MA_ACTIVATE;
         }
     }
 }
