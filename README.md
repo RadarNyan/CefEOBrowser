@@ -10,6 +10,7 @@ As _Kantai Collection_ (web game) updating to 2nd season, it's moving from Flash
 I would only continue this project if _Kantai Collection_ (web game) 2nd season is still playable with ElectronicObserver (otherwise what's the point?) Currently there are still features missing and a lot parts uncompleted, I would finish them after the release of 2nd season. ~I might also abandon this project (again) if 2nd season works just fine with IE11 and I'm feeling lazy.~
 
 This project would have a Japanese UI for consistency (since ElectronicObserver is in Japanese). I'm only writing this readme in English because I'm more familiar with it and also I'm not good at writing in Japanese.
+
 ---
 
 This project uses CefSharp (https://github.com/cefsharp/CefSharp) for Chromium Embedded Framework.
