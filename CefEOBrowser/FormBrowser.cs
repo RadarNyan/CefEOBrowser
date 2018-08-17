@@ -39,7 +39,10 @@ namespace CefEOBrowser
             settings.CefCommandLineArgs.Add("proxy-server", proxy);
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
 
-            Browser = new ChromiumWebBrowser(url);
+            Browser = new ChromiumWebBrowser(url)
+            {
+                LifeSpanHandler = new BrowserLifeSpanHandler()
+            };
             this.SizeAdjuster.Controls.Add(Browser);
             Browser.Dock = DockStyle.Fill;
             Cef_started = true;
@@ -636,6 +639,40 @@ namespace CefEOBrowser
                 Application.Exit();
             }
         }
+
+        private void ToolMenu_Refresh_Click(object sender, EventArgs e)
+        {
+            if (!Configuration.ConfirmAtRefresh ||
+                MessageBox.Show("再読み込みします。\r\nよろしいですか？", "確認",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2)
+                == System.Windows.Forms.DialogResult.OK)
+            {
+                RefreshBrowser();
+            }
+        }
+
+        private void ToolMenu_NavigateToLogInPage_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("ログインページへ移動します。\r\nよろしいですか？", "確認",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
+                == System.Windows.Forms.DialogResult.OK)
+            {
+                Navigate(Configuration.LogInPageURL);
+            }
+        }
+
+        private void ToolMenu_Mute_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _volumeManager.ToggleMute();
+            }
+            catch (Exception)
+            {
+                System.Media.SystemSounds.Beep.Play();
+            }
+            SetVolumeState();
+        }
     }
 
     public class ToolStripOverride : ToolStripProfessionalRenderer
@@ -666,6 +703,36 @@ namespace CefEOBrowser
 
             if (m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
                 m.Result = (IntPtr)MA_ACTIVATE;
+        }
+    }
+
+    /// <summary>
+    /// ポップアップウィンドウを無効化にする（リンクを元ウィンドウに開く）
+    /// </summary>
+    public class BrowserLifeSpanHandler : ILifeSpanHandler
+    {
+        public bool OnBeforePopup(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, string targetUrl, string targetFrameName,
+            WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo,
+            IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
+        {
+            newBrowser = null;
+            browserControl.Load(targetUrl);
+            return true;
+        }
+
+        public void OnAfterCreated(IWebBrowser browserControl, CefSharp.IBrowser browser)
+        {
+            //
+        }
+
+        public bool DoClose(IWebBrowser browserControl, CefSharp.IBrowser browser)
+        {
+            return false;
+        }
+
+        public void OnBeforeClose(IWebBrowser browserControl, CefSharp.IBrowser browser)
+        {
+            //nothing
         }
     }
 }

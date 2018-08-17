@@ -41,28 +41,13 @@
             this.ToolMenu_NavigateToLogInPage = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Icons = new System.Windows.Forms.ImageList(this.components);
-            this.ContextMenuTool = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ContextMenuTool_ShowToolMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_ScreenShot = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_LastScreenShot = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolMenu_Other_Zoom = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolMenu_Other_Volume = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolMenu_Other_Mute = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolMenu_Other_Refresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolMenu_Other_NavigateToLogInPage = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolMenu_Other_Navigate = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolMenu_Other_AppliesStyleSheet = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolMenu_Other_ClearCache = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolMenu_Other_Alignment = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_LastScreenShot_CopyToClipboard = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolMenu_Other_Zoom = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Zoom_Current = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other_Zoom_Fit = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,11 +66,26 @@
             this.ToolMenu_Other_Zoom_250 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Zoom_300 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Zoom_400 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolMenu_Other_Volume = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolMenu_Other_Mute = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolMenu_Other_Refresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolMenu_Other_NavigateToLogInPage = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolMenu_Other_Navigate = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolMenu_Other_AppliesStyleSheet = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolMenu_Other_ClearCache = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolMenu_Other_Alignment = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Top = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Bottom = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Left = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Right = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Invisible = new System.Windows.Forms.ToolStripMenuItem();
+            this.Icons = new System.Windows.Forms.ImageList(this.components);
+            this.ContextMenuTool = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ContextMenuTool_ShowToolMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu.SuspendLayout();
             this.ContextMenuTool.SuspendLayout();
             this.SuspendLayout();
@@ -148,6 +148,7 @@
             this.ToolMenu_Mute.Name = "ToolMenu_Mute";
             this.ToolMenu_Mute.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_Mute.Text = "ミュート";
+            this.ToolMenu_Mute.Click += new System.EventHandler(this.ToolMenu_Mute_Click);
             // 
             // toolStripSeparator3
             // 
@@ -160,6 +161,7 @@
             this.ToolMenu_Refresh.Name = "ToolMenu_Refresh";
             this.ToolMenu_Refresh.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_Refresh.Text = "更新";
+            this.ToolMenu_Refresh.Click += new System.EventHandler(this.ToolMenu_Refresh_Click);
             // 
             // ToolMenu_NavigateToLogInPage
             // 
@@ -167,6 +169,7 @@
             this.ToolMenu_NavigateToLogInPage.Name = "ToolMenu_NavigateToLogInPage";
             this.ToolMenu_NavigateToLogInPage.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_NavigateToLogInPage.Text = "ログインページへ移動";
+            this.ToolMenu_NavigateToLogInPage.Click += new System.EventHandler(this.ToolMenu_NavigateToLogInPage_Click);
             // 
             // toolStripSeparator4
             // 
@@ -197,25 +200,6 @@
             this.ToolMenu_Other.Size = new System.Drawing.Size(13, 22);
             this.ToolMenu_Other.Text = "その他";
             // 
-            // Icons
-            // 
-            this.Icons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.Icons.ImageSize = new System.Drawing.Size(16, 16);
-            this.Icons.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // ContextMenuTool
-            // 
-            this.ContextMenuTool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ContextMenuTool_ShowToolMenu});
-            this.ContextMenuTool.Name = "ContextMenuTool";
-            this.ContextMenuTool.Size = new System.Drawing.Size(195, 26);
-            // 
-            // ContextMenuTool_ShowToolMenu
-            // 
-            this.ContextMenuTool_ShowToolMenu.Name = "ContextMenuTool_ShowToolMenu";
-            this.ContextMenuTool_ShowToolMenu.Size = new System.Drawing.Size(194, 22);
-            this.ContextMenuTool_ShowToolMenu.Text = "ツールメニューを表示";
-            // 
             // ToolMenu_Other_ScreenShot
             // 
             this.ToolMenu_Other_ScreenShot.Name = "ToolMenu_Other_ScreenShot";
@@ -231,6 +215,23 @@
             this.ToolMenu_Other_LastScreenShot.Name = "ToolMenu_Other_LastScreenShot";
             this.ToolMenu_Other_LastScreenShot.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_LastScreenShot.Text = "直前のスクリーンショット(&P)";
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(219, 6);
+            // 
+            // ToolMenu_Other_LastScreenShot_OpenScreenShotFolder
+            // 
+            this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Name = "ToolMenu_Other_LastScreenShot_OpenScreenShotFolder";
+            this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Size = new System.Drawing.Size(222, 22);
+            this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Text = "保存フォルダを開く(&O)";
+            // 
+            // ToolMenu_Other_LastScreenShot_CopyToClipboard
+            // 
+            this.ToolMenu_Other_LastScreenShot_CopyToClipboard.Name = "ToolMenu_Other_LastScreenShot_CopyToClipboard";
+            this.ToolMenu_Other_LastScreenShot_CopyToClipboard.Size = new System.Drawing.Size(222, 22);
+            this.ToolMenu_Other_LastScreenShot_CopyToClipboard.Text = "クリップボードにコピー(&C)";
             // 
             // toolStripSeparator5
             // 
@@ -261,6 +262,110 @@
             this.ToolMenu_Other_Zoom.Name = "ToolMenu_Other_Zoom";
             this.ToolMenu_Other_Zoom.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_Zoom.Text = "ズーム(&Z)";
+            // 
+            // ToolMenu_Other_Zoom_Current
+            // 
+            this.ToolMenu_Other_Zoom_Current.Enabled = false;
+            this.ToolMenu_Other_Zoom_Current.Name = "ToolMenu_Other_Zoom_Current";
+            this.ToolMenu_Other_Zoom_Current.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_Current.Text = "現在%";
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(119, 6);
+            // 
+            // ToolMenu_Other_Zoom_Fit
+            // 
+            this.ToolMenu_Other_Zoom_Fit.Name = "ToolMenu_Other_Zoom_Fit";
+            this.ToolMenu_Other_Zoom_Fit.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_Fit.Text = "ぴったり";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(119, 6);
+            // 
+            // ToolMenu_Other_Zoom_Decrement
+            // 
+            this.ToolMenu_Other_Zoom_Decrement.Name = "ToolMenu_Other_Zoom_Decrement";
+            this.ToolMenu_Other_Zoom_Decrement.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_Decrement.Text = "-20%";
+            // 
+            // ToolMenu_Other_Zoom_Increment
+            // 
+            this.ToolMenu_Other_Zoom_Increment.Name = "ToolMenu_Other_Zoom_Increment";
+            this.ToolMenu_Other_Zoom_Increment.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_Increment.Text = "+20%";
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(119, 6);
+            // 
+            // ToolMenu_Other_Zoom_25
+            // 
+            this.ToolMenu_Other_Zoom_25.Name = "ToolMenu_Other_Zoom_25";
+            this.ToolMenu_Other_Zoom_25.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_25.Text = "25%";
+            // 
+            // ToolMenu_Other_Zoom_50
+            // 
+            this.ToolMenu_Other_Zoom_50.Name = "ToolMenu_Other_Zoom_50";
+            this.ToolMenu_Other_Zoom_50.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_50.Text = "50%";
+            // 
+            // ToolMenu_Other_Zoom_75
+            // 
+            this.ToolMenu_Other_Zoom_75.Name = "ToolMenu_Other_Zoom_75";
+            this.ToolMenu_Other_Zoom_75.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_75.Text = "75%";
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(119, 6);
+            // 
+            // ToolMenu_Other_Zoom_100
+            // 
+            this.ToolMenu_Other_Zoom_100.Name = "ToolMenu_Other_Zoom_100";
+            this.ToolMenu_Other_Zoom_100.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_100.Text = "100%";
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(119, 6);
+            // 
+            // ToolMenu_Other_Zoom_150
+            // 
+            this.ToolMenu_Other_Zoom_150.Name = "ToolMenu_Other_Zoom_150";
+            this.ToolMenu_Other_Zoom_150.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_150.Text = "150%";
+            // 
+            // ToolMenu_Other_Zoom_200
+            // 
+            this.ToolMenu_Other_Zoom_200.Name = "ToolMenu_Other_Zoom_200";
+            this.ToolMenu_Other_Zoom_200.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_200.Text = "200%";
+            // 
+            // ToolMenu_Other_Zoom_250
+            // 
+            this.ToolMenu_Other_Zoom_250.Name = "ToolMenu_Other_Zoom_250";
+            this.ToolMenu_Other_Zoom_250.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_250.Text = "250%";
+            // 
+            // ToolMenu_Other_Zoom_300
+            // 
+            this.ToolMenu_Other_Zoom_300.Name = "ToolMenu_Other_Zoom_300";
+            this.ToolMenu_Other_Zoom_300.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_300.Text = "300%";
+            // 
+            // ToolMenu_Other_Zoom_400
+            // 
+            this.ToolMenu_Other_Zoom_400.Name = "ToolMenu_Other_Zoom_400";
+            this.ToolMenu_Other_Zoom_400.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_400.Text = "400%";
             // 
             // toolStripSeparator6
             // 
@@ -336,156 +441,54 @@
             this.ToolMenu_Other_Alignment.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_Alignment.Text = "配置(&A)";
             // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(219, 6);
-            // 
-            // ToolMenu_Other_LastScreenShot_OpenScreenShotFolder
-            // 
-            this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Name = "ToolMenu_Other_LastScreenShot_OpenScreenShotFolder";
-            this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Size = new System.Drawing.Size(222, 22);
-            this.ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Text = "保存フォルダを開く(&O)";
-            // 
-            // ToolMenu_Other_LastScreenShot_CopyToClipboard
-            // 
-            this.ToolMenu_Other_LastScreenShot_CopyToClipboard.Name = "ToolMenu_Other_LastScreenShot_CopyToClipboard";
-            this.ToolMenu_Other_LastScreenShot_CopyToClipboard.Size = new System.Drawing.Size(222, 22);
-            this.ToolMenu_Other_LastScreenShot_CopyToClipboard.Text = "クリップボードにコピー(&C)";
-            // 
-            // ToolMenu_Other_Zoom_Current
-            // 
-            this.ToolMenu_Other_Zoom_Current.Enabled = false;
-            this.ToolMenu_Other_Zoom_Current.Name = "ToolMenu_Other_Zoom_Current";
-            this.ToolMenu_Other_Zoom_Current.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_Current.Text = "現在%";
-            // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(177, 6);
-            // 
-            // ToolMenu_Other_Zoom_Fit
-            // 
-            this.ToolMenu_Other_Zoom_Fit.Name = "ToolMenu_Other_Zoom_Fit";
-            this.ToolMenu_Other_Zoom_Fit.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_Fit.Text = "ぴったり";
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(177, 6);
-            // 
-            // ToolMenu_Other_Zoom_Decrement
-            // 
-            this.ToolMenu_Other_Zoom_Decrement.Name = "ToolMenu_Other_Zoom_Decrement";
-            this.ToolMenu_Other_Zoom_Decrement.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_Decrement.Text = "-20%";
-            // 
-            // ToolMenu_Other_Zoom_Increment
-            // 
-            this.ToolMenu_Other_Zoom_Increment.Name = "ToolMenu_Other_Zoom_Increment";
-            this.ToolMenu_Other_Zoom_Increment.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_Increment.Text = "+20%";
-            // 
-            // toolStripSeparator13
-            // 
-            this.toolStripSeparator13.Name = "toolStripSeparator13";
-            this.toolStripSeparator13.Size = new System.Drawing.Size(177, 6);
-            // 
-            // ToolMenu_Other_Zoom_25
-            // 
-            this.ToolMenu_Other_Zoom_25.Name = "ToolMenu_Other_Zoom_25";
-            this.ToolMenu_Other_Zoom_25.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_25.Text = "25%";
-            // 
-            // ToolMenu_Other_Zoom_50
-            // 
-            this.ToolMenu_Other_Zoom_50.Name = "ToolMenu_Other_Zoom_50";
-            this.ToolMenu_Other_Zoom_50.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_50.Text = "50%";
-            // 
-            // ToolMenu_Other_Zoom_75
-            // 
-            this.ToolMenu_Other_Zoom_75.Name = "ToolMenu_Other_Zoom_75";
-            this.ToolMenu_Other_Zoom_75.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_75.Text = "75%";
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(177, 6);
-            // 
-            // ToolMenu_Other_Zoom_100
-            // 
-            this.ToolMenu_Other_Zoom_100.Name = "ToolMenu_Other_Zoom_100";
-            this.ToolMenu_Other_Zoom_100.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_100.Text = "100%";
-            // 
-            // toolStripSeparator15
-            // 
-            this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(177, 6);
-            // 
-            // ToolMenu_Other_Zoom_150
-            // 
-            this.ToolMenu_Other_Zoom_150.Name = "ToolMenu_Other_Zoom_150";
-            this.ToolMenu_Other_Zoom_150.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_150.Text = "150%";
-            // 
-            // ToolMenu_Other_Zoom_200
-            // 
-            this.ToolMenu_Other_Zoom_200.Name = "ToolMenu_Other_Zoom_200";
-            this.ToolMenu_Other_Zoom_200.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_200.Text = "200%";
-            // 
-            // ToolMenu_Other_Zoom_250
-            // 
-            this.ToolMenu_Other_Zoom_250.Name = "ToolMenu_Other_Zoom_250";
-            this.ToolMenu_Other_Zoom_250.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_250.Text = "250%";
-            // 
-            // ToolMenu_Other_Zoom_300
-            // 
-            this.ToolMenu_Other_Zoom_300.Name = "ToolMenu_Other_Zoom_300";
-            this.ToolMenu_Other_Zoom_300.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_300.Text = "300%";
-            // 
-            // ToolMenu_Other_Zoom_400
-            // 
-            this.ToolMenu_Other_Zoom_400.Name = "ToolMenu_Other_Zoom_400";
-            this.ToolMenu_Other_Zoom_400.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_400.Text = "400%";
-            // 
             // ToolMenu_Other_Alignment_Top
             // 
             this.ToolMenu_Other_Alignment_Top.Name = "ToolMenu_Other_Alignment_Top";
-            this.ToolMenu_Other_Alignment_Top.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Alignment_Top.Size = new System.Drawing.Size(121, 22);
             this.ToolMenu_Other_Alignment_Top.Text = "上(&T)";
             // 
             // ToolMenu_Other_Alignment_Bottom
             // 
             this.ToolMenu_Other_Alignment_Bottom.Name = "ToolMenu_Other_Alignment_Bottom";
-            this.ToolMenu_Other_Alignment_Bottom.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Alignment_Bottom.Size = new System.Drawing.Size(121, 22);
             this.ToolMenu_Other_Alignment_Bottom.Text = "下(&B)";
             // 
             // ToolMenu_Other_Alignment_Left
             // 
             this.ToolMenu_Other_Alignment_Left.Name = "ToolMenu_Other_Alignment_Left";
-            this.ToolMenu_Other_Alignment_Left.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Alignment_Left.Size = new System.Drawing.Size(121, 22);
             this.ToolMenu_Other_Alignment_Left.Text = "左(&L)";
             // 
             // ToolMenu_Other_Alignment_Right
             // 
             this.ToolMenu_Other_Alignment_Right.Name = "ToolMenu_Other_Alignment_Right";
-            this.ToolMenu_Other_Alignment_Right.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Alignment_Right.Size = new System.Drawing.Size(121, 22);
             this.ToolMenu_Other_Alignment_Right.Text = "右(&R)";
             // 
             // ToolMenu_Other_Alignment_Invisible
             // 
             this.ToolMenu_Other_Alignment_Invisible.Name = "ToolMenu_Other_Alignment_Invisible";
-            this.ToolMenu_Other_Alignment_Invisible.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Alignment_Invisible.Size = new System.Drawing.Size(121, 22);
             this.ToolMenu_Other_Alignment_Invisible.Text = "非表示(&I)";
+            // 
+            // Icons
+            // 
+            this.Icons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.Icons.ImageSize = new System.Drawing.Size(16, 16);
+            this.Icons.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // ContextMenuTool
+            // 
+            this.ContextMenuTool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ContextMenuTool_ShowToolMenu});
+            this.ContextMenuTool.Name = "ContextMenuTool";
+            this.ContextMenuTool.Size = new System.Drawing.Size(195, 26);
+            // 
+            // ContextMenuTool_ShowToolMenu
+            // 
+            this.ContextMenuTool_ShowToolMenu.Name = "ContextMenuTool_ShowToolMenu";
+            this.ContextMenuTool_ShowToolMenu.Size = new System.Drawing.Size(194, 22);
+            this.ContextMenuTool_ShowToolMenu.Text = "ツールメニューを表示";
             // 
             // FormBrowser
             // 
