@@ -215,10 +215,10 @@ namespace CefEOBrowser
         {
             Configuration = conf;
 
-            SizeAdjuster.AutoScroll = Configuration.IsScrollable;
-            ToolMenu_Other_Zoom_Fit.Checked = Configuration.ZoomFit;
-            ApplyZoom();
-            ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
+            //SizeAdjuster.AutoScroll = Configuration.IsScrollable;
+            //ToolMenu_Other_Zoom_Fit.Checked = Configuration.ZoomFit;
+            //ApplyZoom();
+            //ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
             ToolMenu.Dock = (DockStyle)Configuration.ToolMenuDockStyle;
             ToolMenu.Visible = Configuration.IsToolMenuVisible;
         }
