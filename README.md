@@ -1,6 +1,9 @@
 # CefEOBrowser
 Cef (Chromium Embedded Framework) based Browser for ElectronicObserver (https://github.com/andanteyk/ElectronicObserver)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/1qcyyjtf64ohk6mu?svg=true)](https://ci.appveyor.com/project/RadarNyan/cefeobrowser)
+
+
 ---
 
 This project is intended to create a drop-in replacement EOBrowser.exe for ElectronicObserver.
