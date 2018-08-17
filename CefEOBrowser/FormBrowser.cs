@@ -328,6 +328,7 @@ namespace CefEOBrowser
 
             try
             {
+                Browser.SetZoomLevel((zoomRate - 100) / 25.0);
                 /*
                 var wb = Browser.ActiveXInstance as SHDocVw.IWebBrowser2;
                 if (wb == null || wb.ReadyState == SHDocVw.tagREADYSTATE.READYSTATE_UNINITIALIZED || wb.Busy) return;
@@ -672,6 +673,66 @@ namespace CefEOBrowser
                 System.Media.SystemSounds.Beep.Play();
             }
             SetVolumeState();
+        }
+
+        private void ToolMenu_Zoom_DropDownOpening(object sender, EventArgs e)
+        {
+            var list = ToolMenu_Other_Zoom.DropDownItems.Cast<ToolStripItem>().ToArray();
+            ToolMenu_Zoom.DropDownItems.AddRange(list);
+        }
+
+        private void ToolMenu_Other_Zoom_Fit_Click(object sender, EventArgs e)
+        {
+            Configuration.ZoomFit = ToolMenu_Other_Zoom_Fit.Checked;
+            ApplyZoom();
+            ConfigurationUpdated();
+        }
+
+        private void ToolMenu_Other_Zoom_Click(object sender, EventArgs e)
+        {
+            int zoom;
+
+            if (sender == ToolMenu_Other_Zoom_25)
+                zoom = 25;
+            else if (sender == ToolMenu_Other_Zoom_50)
+                zoom = 50;
+            else if (sender == ToolMenu_Other_Zoom_75)
+                zoom = 75;
+            else if (sender == ToolMenu_Other_Zoom_100)
+                zoom = 100;
+            else if (sender == ToolMenu_Other_Zoom_150)
+                zoom = 150;
+            else if (sender == ToolMenu_Other_Zoom_200)
+                zoom = 200;
+            else if (sender == ToolMenu_Other_Zoom_250)
+                zoom = 250;
+            else if (sender == ToolMenu_Other_Zoom_300)
+                zoom = 300;
+            else if (sender == ToolMenu_Other_Zoom_400)
+                zoom = 400;
+            else
+                zoom = 100;
+
+            Configuration.ZoomRate = zoom;
+            Configuration.ZoomFit = ToolMenu_Other_Zoom_Fit.Checked = false;
+            ApplyZoom();
+            ConfigurationUpdated();
+        }
+
+        private void ToolMenu_Other_Zoom_Decrement_Click(object sender, EventArgs e)
+        {
+            Configuration.ZoomRate = Math.Max(Configuration.ZoomRate - 20, 10);
+            Configuration.ZoomFit = ToolMenu_Other_Zoom_Fit.Checked = false;
+            ApplyZoom();
+            ConfigurationUpdated();
+        }
+
+        private void ToolMenu_Other_Zoom_Increment_Click(object sender, EventArgs e)
+        {
+            Configuration.ZoomRate = Math.Min(Configuration.ZoomRate + 20, 1000);
+            Configuration.ZoomFit = ToolMenu_Other_Zoom_Fit.Checked = false;
+            ApplyZoom();
+            ConfigurationUpdated();
         }
     }
 
