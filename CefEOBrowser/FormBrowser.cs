@@ -214,6 +214,13 @@ namespace CefEOBrowser
         public void ConfigurationChanged(BrowserConfiguration conf)
         {
             Configuration = conf;
+
+            SizeAdjuster.AutoScroll = Configuration.IsScrollable;
+            ToolMenu_Other_Zoom_Fit.Checked = Configuration.ZoomFit;
+            ApplyZoom();
+            ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
+            ToolMenu.Dock = (DockStyle)Configuration.ToolMenuDockStyle;
+            ToolMenu.Visible = Configuration.IsToolMenuVisible;
         }
 
         public void InitialAPIReceived()
@@ -734,6 +741,44 @@ namespace CefEOBrowser
             ApplyZoom();
             ConfigurationUpdated();
         }
+
+        private void ToolMenu_Other_Alignment_Click(object sender, EventArgs e)
+        {
+            if (sender == ToolMenu_Other_Alignment_Top)
+                ToolMenu.Dock = DockStyle.Top;
+            else if (sender == ToolMenu_Other_Alignment_Bottom)
+                ToolMenu.Dock = DockStyle.Bottom;
+            else if (sender == ToolMenu_Other_Alignment_Left)
+                ToolMenu.Dock = DockStyle.Left;
+            else
+                ToolMenu.Dock = DockStyle.Right;
+
+            Configuration.ToolMenuDockStyle = (int)ToolMenu.Dock;
+
+            ConfigurationUpdated();
+        }
+
+        private void ToolMenu_Other_Alignment_Invisible_Click(object sender, EventArgs e)
+        {
+            ToolMenu.Visible =
+            Configuration.IsToolMenuVisible = false;
+            ConfigurationUpdated();
+        }
+
+        private void SizeAdjuster_DoubleClick(object sender, EventArgs e)
+        {
+            ToolMenu.Visible =
+            Configuration.IsToolMenuVisible = true;
+            ConfigurationUpdated();
+        }
+
+        private void ContextMenuTool_ShowToolMenu_Click(object sender, EventArgs e)
+        {
+            ToolMenu.Visible =
+            Configuration.IsToolMenuVisible = true;
+            ConfigurationUpdated();
+        }
+
     }
 
     public class ToolStripOverride : ToolStripProfessionalRenderer
