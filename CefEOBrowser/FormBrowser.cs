@@ -50,8 +50,7 @@ namespace CefEOBrowser
             libraryLoader.Dispose();
         }
 
-        private readonly Size KanColleSize = new Size(800, 480);
-        private bool RestoreStyleSheet = false;
+        private readonly Size KanColleSize = new Size(1200, 720);
 
         // FormBrowserHostの通信サーバ
         private string ServerUri;
@@ -65,36 +64,44 @@ namespace CefEOBrowser
         private Timer HeartbeatTimer = new Timer();
         private IntPtr HostWindow;
 
-        private bool _styleSheetApplied;
         /// <summary>
         /// スタイルシートの変更が適用されているか
         /// </summary>
-        private bool StyleSheetApplied
-        {
-            get { return _styleSheetApplied; }
-            set
-            {
+        private bool StyleSheetApplied;
 
-                if (value)
-                {
-                    //Browser.Anchor = AnchorStyles.None;
-                    ApplyZoom();
-                    SizeAdjuster_SizeChanged(null, new EventArgs());
+        #region JavaScripts (Apply & Restore)
 
-                }
-                else
-                {
-                    SizeAdjuster.SuspendLayout();
-                    //Browser.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-                    Browser.Location = new Point(0, 0);
-                    Browser.MinimumSize = new Size(0, 0);
-                    Browser.Size = SizeAdjuster.Size;
-                    SizeAdjuster.ResumeLayout();
-                }
+                private readonly string Page_JS = @"(function () {
+        var node = document.getElementById('da1733f9ca1d');
+        if (node) document.head.removeChild(node);
+        node = document.createElement('style');
+        node.id = 'da1733f9ca1d';
+        node.innerHTML = 'body { visibility: hidden; overflow: hidden; } \
+div #block_background { visibility: visible; } \
+div #alert { visibility: visible; overflow: scroll; top: 0 !important; left: 3% !important; width: 90% !important; height: 100%; padding:2%;} \
+div.dmm-ntgnavi { display: none; } \
+#area-game { position: fixed; left: 0; top: 0; width: 100%; height: 100%; } \
+#game_frame { visibility: visible; width: 100%; height: 100%; }';
+        document.head.appendChild(node);
+        })();";
 
-                _styleSheetApplied = value;
-            }
-        }
+        private readonly string Frame_JS = @"(function () {
+var node = document.getElementById('da1733f9ca1d');
+if (node) document.head.removeChild(node);
+node = document.createElement('style');
+node.id = 'da1733f9ca1d';
+node.innerHTML = '#flashWrap { position: fixed; left: 0; top: 0; width: 100%; height: 100%; } \
+#htmlWrap { width: 100% !important; height: 100% !important; } \
+#sectionWrap { display:none !important; }';
+document.head.appendChild(node);
+})();";
+
+        private readonly string Restore_JS = @"(function () {
+var node = document.getElementById('da1733f9ca1d');
+if (node) document.head.removeChild(node);
+})();";
+
+        #endregion
 
         private void SizeAdjuster_SizeChanged(object p, EventArgs eventArgs)
         {
@@ -215,12 +222,15 @@ namespace CefEOBrowser
         {
             Configuration = conf;
 
-            //SizeAdjuster.AutoScroll = Configuration.IsScrollable;
+            SizeAdjuster.AutoScroll = Configuration.IsScrollable;
             //ToolMenu_Other_Zoom_Fit.Checked = Configuration.ZoomFit;
             //ApplyZoom();
-            //ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
+            ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
             ToolMenu.Dock = (DockStyle)Configuration.ToolMenuDockStyle;
             ToolMenu.Visible = Configuration.IsToolMenuVisible;
+
+            //SizeAdjuster.BackColor = System.Drawing.Color.FromArgb(255,29,31,33);
+            //ToolMenu.BackColor = System.Drawing.Color.FromArgb(255, 29, 31, 33);
         }
 
         public void InitialAPIReceived()
@@ -228,9 +238,12 @@ namespace CefEOBrowser
             IsKanColleLoaded = true;
 
             //ロード直後の適用ではレイアウトがなぜか崩れるのでこのタイミングでも適用
-            ApplyStyleSheet();
-            ApplyZoom();
-            DestroyDMMreloadDialog();
+            if (!StyleSheetApplied)
+            {
+                ApplyStyleSheet();
+                ApplyZoom();
+            }
+            // DestroyDMMreloadDialog();
 
             //起動直後はまだ音声が鳴っていないのでミュートできないため、この時点で有効化
             SetVolumeState();
@@ -332,46 +345,25 @@ namespace CefEOBrowser
         {
             int zoomRate = Configuration.ZoomRate;
             bool fit = Configuration.ZoomFit && StyleSheetApplied;
+            double zoomFactor;
 
             try
             {
-                Browser.SetZoomLevel((zoomRate - 100) / 25.0);
-                /*
-                var wb = Browser.ActiveXInstance as SHDocVw.IWebBrowser2;
-                if (wb == null || wb.ReadyState == SHDocVw.tagREADYSTATE.READYSTATE_UNINITIALIZED || wb.Busy) return;
-
-                double zoomFactor;
-                object pin;
-
-                if (fit)
-                {
-                    pin = 100;
-                    double rateX = (double)SizeAdjuster.Width / KanColleSize.Width;
-                    double rateY = (double)SizeAdjuster.Height / KanColleSize.Height;
-                    zoomFactor = Math.Min(rateX, rateY);
-                }
-                else
-                {
-                    if (zoomRate < 10)
-                        zoomRate = 10;
-                    if (zoomRate > 1000)
-                        zoomRate = 1000;
-
-                    pin = zoomRate;
-                    zoomFactor = zoomRate / 100.0;
-                }
-
-                object pout = null;
-                wb.ExecWB(SHDocVw.OLECMDID.OLECMDID_OPTICAL_ZOOM, SHDocVw.OLECMDEXECOPT.OLECMDEXECOPT_DODEFAULT, ref pin, ref pout);
+                zoomFactor = zoomRate / 100.0;
+                if (zoomRate == 66)
+                    zoomFactor = 2 / 3.0;
+                double zoomLevel = Math.Log(zoomFactor, 1.2);
+                Browser.SetZoomLevel(zoomLevel);
+                
 
                 if (StyleSheetApplied)
                 {
-                    Browser.Size = Browser.MinimumSize = new Size(
+                    Browser.Size = new Size(
                         (int)(KanColleSize.Width * zoomFactor),
                         (int)(KanColleSize.Height * zoomFactor)
                         );
                     CenteringBrowser();
-                }*/
+                }
 
                 if (fit)
                 {
@@ -388,6 +380,25 @@ namespace CefEOBrowser
             {
                 AddLog(3, "ズームの適用に失敗しました。" + ex.Message);
             }
+        }
+
+        private void CenteringBrowser()
+        {
+            SizeAdjuster.SuspendLayout();
+            int x = Browser.Location.X, y = Browser.Location.Y;
+            bool isScrollable = Configuration.IsScrollable;
+            Browser.Dock = DockStyle.None;
+            if (!isScrollable || Browser.Width <= SizeAdjuster.Width)
+            {
+                x = (SizeAdjuster.Width - Browser.Width) / 2;
+            }
+            if (!isScrollable || Browser.Height <= SizeAdjuster.Height)
+            {
+                y = (SizeAdjuster.Height - Browser.Height) / 2;
+            }
+            Browser.Anchor = AnchorStyles.None;
+            Browser.Location = new Point(x, y);
+            SizeAdjuster.ResumeLayout();
         }
 
         public void Navigate(string url)
@@ -432,46 +443,59 @@ namespace CefEOBrowser
 
         public void ApplyStyleSheet()
         {
-            if (!Configuration.AppliesStyleSheet && !RestoreStyleSheet)
+            if (!StyleSheetApplied && !Configuration.AppliesStyleSheet)
                 return;
 
             try
             {
-                /*
-                var document = Browser.Document;
-                if (document == null) return;
-
-                if (document.Url.ToString().Contains(".swf?"))
+                if (StyleSheetApplied)
                 {
-
-                    document.InvokeScript("eval", new object[] { "document.body.style.margin=0;" });
-
-                }
-                else
-                {
-                    var swf = getFrameElementById(document, "externalswf");
-                    if (swf == null) return;
-
-                    if (RestoreStyleSheet)
+                    var browser = Browser.GetBrowser();
+                    bool has_game_frame = false;
+                    foreach (var i in browser.GetFrameIdentifiers())
                     {
-                        document.InvokeScript("eval", new object[] { string.Format(RestoreScript, StyleClassID) });
-                        swf.Document.InvokeScript("eval", new object[] { string.Format(RestoreScript, StyleClassID) });
-                        StyleSheetApplied = false;
-                        RestoreStyleSheet = false;
-                        return;
+                        IFrame frame = browser.GetFrame(i);
+                        if (frame.Name == "game_frame")
+                        {
+                            has_game_frame = true;
+                            frame.ExecuteJavaScriptAsync(Restore_JS);
+                            break;
+                        }
                     }
-                    // InvokeScriptは関数しか呼べないようなので、スクリプトをevalで渡す
-                    document.InvokeScript("eval", new object[] { string.Format(Properties.Resources.PageScript, StyleClassID) });
-                    swf.Document.InvokeScript("eval", new object[] { string.Format(Properties.Resources.FrameScript, StyleClassID) });
+                    if (has_game_frame)
+                    {
+                        browser.MainFrame.ExecuteJavaScriptAsync(Restore_JS);
+                        StyleSheetApplied = false;
+                    }
                 }
-                */
+                else if (!StyleSheetApplied && Configuration.AppliesStyleSheet)
+                {
+                    var browser = Browser.GetBrowser();
+                    bool has_game_frame = false;
+                    foreach (var i in browser.GetFrameIdentifiers())
+                    {
+                        IFrame frame = browser.GetFrame(i);
+                        if (frame.Name == "game_frame")
+                        {
+                            has_game_frame = true;
+                            frame.ExecuteJavaScriptAsync(Frame_JS);
+                            break;
+                        }
+                    }
+                    if (has_game_frame)
+                    {
+                        browser.MainFrame.ExecuteJavaScriptAsync(Page_JS);
+                        StyleSheetApplied = true;
+                    }
+                }
 
-                StyleSheetApplied = true;
+                ApplyZoom();
             }
             catch (Exception ex)
             {
                 SendErrorReport(ex.ToString(), "スタイルシートの適用に失敗しました。");
             }
+            
         }
 
         public void DestroyDMMreloadDialog()
@@ -703,6 +727,8 @@ namespace CefEOBrowser
                 zoom = 25;
             else if (sender == ToolMenu_Other_Zoom_50)
                 zoom = 50;
+            else if (sender == ToolMenu_Other_Zoom_66)
+                zoom = 66;
             else if (sender == ToolMenu_Other_Zoom_75)
                 zoom = 75;
             else if (sender == ToolMenu_Other_Zoom_100)
@@ -779,6 +805,17 @@ namespace CefEOBrowser
             ConfigurationUpdated();
         }
 
+        private void ToolMenu_Other_AppliesStyleSheet_Click(object sender, EventArgs e)
+        {
+            Configuration.AppliesStyleSheet = ToolMenu_Other_AppliesStyleSheet.Checked;
+            ApplyStyleSheet();
+            ConfigurationUpdated();
+        }
+
+        private void ToolMenu_ScreenShot_Click(object sender, EventArgs e)
+        {
+            Browser.ShowDevTools();
+        }
     }
 
     public class ToolStripOverride : ToolStripProfessionalRenderer
