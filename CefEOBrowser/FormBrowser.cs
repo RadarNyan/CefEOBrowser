@@ -37,7 +37,7 @@ namespace CefEOBrowser
             settings.BrowserSubprocessPath = Path.Combine(cef_path, @"bin\CefSharp.BrowserSubprocess.exe");
             settings.LogSeverity = LogSeverity.Disable;
             settings.CefCommandLineArgs.Add("proxy-server", proxy);
-            settings.DisableGpuAcceleration();
+            // settings.DisableGpuAcceleration();
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
 
             Browser = new ChromiumWebBrowser(url)
