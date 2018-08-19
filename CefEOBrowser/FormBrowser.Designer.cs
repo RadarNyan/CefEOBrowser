@@ -60,6 +60,7 @@
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other_Zoom_25 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Zoom_50 = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolMenu_Other_Zoom_66 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Zoom_75 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other_Zoom_100 = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,7 +87,6 @@
             this.ToolMenu_Other_Alignment_Left = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Right = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Alignment_Invisible = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolMenu_Other_Zoom_66 = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenuTool.SuspendLayout();
             this.ToolMenu.SuspendLayout();
             this.SuspendLayout();
@@ -293,116 +293,123 @@
             // 
             this.ToolMenu_Other_Zoom_Current.Enabled = false;
             this.ToolMenu_Other_Zoom_Current.Name = "ToolMenu_Other_Zoom_Current";
-            this.ToolMenu_Other_Zoom_Current.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_Current.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_Current.Text = "現在%";
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(119, 6);
             // 
             // ToolMenu_Other_Zoom_Fit
             // 
             this.ToolMenu_Other_Zoom_Fit.Enabled = false;
             this.ToolMenu_Other_Zoom_Fit.Name = "ToolMenu_Other_Zoom_Fit";
-            this.ToolMenu_Other_Zoom_Fit.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_Fit.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_Fit.Text = "ぴったり";
             this.ToolMenu_Other_Zoom_Fit.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Fit_Click);
             // 
             // toolStripSeparator12
             // 
             this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator12.Size = new System.Drawing.Size(119, 6);
             // 
             // ToolMenu_Other_Zoom_Decrement
             // 
             this.ToolMenu_Other_Zoom_Decrement.Name = "ToolMenu_Other_Zoom_Decrement";
-            this.ToolMenu_Other_Zoom_Decrement.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_Decrement.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_Decrement.Text = "-20%";
             this.ToolMenu_Other_Zoom_Decrement.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Decrement_Click);
             // 
             // ToolMenu_Other_Zoom_Increment
             // 
             this.ToolMenu_Other_Zoom_Increment.Name = "ToolMenu_Other_Zoom_Increment";
-            this.ToolMenu_Other_Zoom_Increment.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_Increment.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_Increment.Text = "+20%";
             this.ToolMenu_Other_Zoom_Increment.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Increment_Click);
             // 
             // toolStripSeparator13
             // 
             this.toolStripSeparator13.Name = "toolStripSeparator13";
-            this.toolStripSeparator13.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator13.Size = new System.Drawing.Size(119, 6);
             // 
             // ToolMenu_Other_Zoom_25
             // 
             this.ToolMenu_Other_Zoom_25.Name = "ToolMenu_Other_Zoom_25";
-            this.ToolMenu_Other_Zoom_25.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_25.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_25.Text = "25%";
             this.ToolMenu_Other_Zoom_25.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // ToolMenu_Other_Zoom_50
             // 
             this.ToolMenu_Other_Zoom_50.Name = "ToolMenu_Other_Zoom_50";
-            this.ToolMenu_Other_Zoom_50.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_50.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_50.Text = "50%";
             this.ToolMenu_Other_Zoom_50.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
+            // 
+            // ToolMenu_Other_Zoom_66
+            // 
+            this.ToolMenu_Other_Zoom_66.Name = "ToolMenu_Other_Zoom_66";
+            this.ToolMenu_Other_Zoom_66.Size = new System.Drawing.Size(122, 22);
+            this.ToolMenu_Other_Zoom_66.Text = "66%";
+            this.ToolMenu_Other_Zoom_66.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // ToolMenu_Other_Zoom_75
             // 
             this.ToolMenu_Other_Zoom_75.Name = "ToolMenu_Other_Zoom_75";
-            this.ToolMenu_Other_Zoom_75.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_75.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_75.Text = "75%";
             this.ToolMenu_Other_Zoom_75.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(119, 6);
             // 
             // ToolMenu_Other_Zoom_100
             // 
             this.ToolMenu_Other_Zoom_100.Name = "ToolMenu_Other_Zoom_100";
-            this.ToolMenu_Other_Zoom_100.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_100.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_100.Text = "100%";
             this.ToolMenu_Other_Zoom_100.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator15.Size = new System.Drawing.Size(119, 6);
             // 
             // ToolMenu_Other_Zoom_150
             // 
             this.ToolMenu_Other_Zoom_150.Name = "ToolMenu_Other_Zoom_150";
-            this.ToolMenu_Other_Zoom_150.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_150.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_150.Text = "150%";
             this.ToolMenu_Other_Zoom_150.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // ToolMenu_Other_Zoom_200
             // 
             this.ToolMenu_Other_Zoom_200.Name = "ToolMenu_Other_Zoom_200";
-            this.ToolMenu_Other_Zoom_200.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_200.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_200.Text = "200%";
             this.ToolMenu_Other_Zoom_200.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // ToolMenu_Other_Zoom_250
             // 
             this.ToolMenu_Other_Zoom_250.Name = "ToolMenu_Other_Zoom_250";
-            this.ToolMenu_Other_Zoom_250.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_250.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_250.Text = "250%";
             this.ToolMenu_Other_Zoom_250.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // ToolMenu_Other_Zoom_300
             // 
             this.ToolMenu_Other_Zoom_300.Name = "ToolMenu_Other_Zoom_300";
-            this.ToolMenu_Other_Zoom_300.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_300.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_300.Text = "300%";
             this.ToolMenu_Other_Zoom_300.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
             // ToolMenu_Other_Zoom_400
             // 
             this.ToolMenu_Other_Zoom_400.Name = "ToolMenu_Other_Zoom_400";
-            this.ToolMenu_Other_Zoom_400.Size = new System.Drawing.Size(180, 22);
+            this.ToolMenu_Other_Zoom_400.Size = new System.Drawing.Size(122, 22);
             this.ToolMenu_Other_Zoom_400.Text = "400%";
             this.ToolMenu_Other_Zoom_400.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
             // 
@@ -517,13 +524,6 @@
             this.ToolMenu_Other_Alignment_Invisible.Text = "非表示(&I)";
             this.ToolMenu_Other_Alignment_Invisible.Click += new System.EventHandler(this.ToolMenu_Other_Alignment_Invisible_Click);
             // 
-            // ToolMenu_Other_Zoom_66
-            // 
-            this.ToolMenu_Other_Zoom_66.Name = "ToolMenu_Other_Zoom_66";
-            this.ToolMenu_Other_Zoom_66.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_Zoom_66.Text = "66%";
-            this.ToolMenu_Other_Zoom_66.Click += new System.EventHandler(this.ToolMenu_Other_Zoom_Click);
-            // 
             // FormBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -533,6 +533,7 @@
             this.Controls.Add(this.ToolMenu);
             this.Name = "FormBrowser";
             this.Text = "CefEOBrowser";
+            this.Activated += new System.EventHandler(this.FormBrowser_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBrowser_FormClosing);
             this.Load += new System.EventHandler(this.FormBrowser_Load);
             this.ContextMenuTool.ResumeLayout(false);

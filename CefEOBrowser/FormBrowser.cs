@@ -54,6 +54,8 @@ namespace CefEOBrowser
 
         private readonly Size KanColleSize = new Size(1200, 720);
 
+        private readonly string StyleClassID = Guid.NewGuid().ToString().Substring(0, 8);
+
         // FormBrowserHostの通信サーバ
         private string ServerUri;
 
@@ -70,40 +72,6 @@ namespace CefEOBrowser
         /// スタイルシートの変更が適用されているか
         /// </summary>
         private bool StyleSheetApplied;
-
-        #region JavaScripts (Apply & Restore)
-
-                private readonly string Page_JS = @"(function () {
-        var node = document.getElementById('da1733f9ca1d');
-        if (node) document.head.removeChild(node);
-        node = document.createElement('style');
-        node.id = 'da1733f9ca1d';
-        node.innerHTML = 'body { visibility: hidden; overflow: hidden; } \
-div #block_background { visibility: visible; } \
-div #alert { visibility: visible; overflow: scroll; top: 0 !important; left: 3% !important; width: 90% !important; height: 100%; padding:2%;} \
-div.dmm-ntgnavi { display: none; } \
-#area-game { position: fixed; left: 0; top: 0; width: 100%; height: 100%; } \
-#game_frame { visibility: visible; width: 100%; height: 100%; }';
-        document.head.appendChild(node);
-        })();";
-
-        private readonly string Frame_JS = @"(function () {
-var node = document.getElementById('da1733f9ca1d');
-if (node) document.head.removeChild(node);
-node = document.createElement('style');
-node.id = 'da1733f9ca1d';
-node.innerHTML = '#flashWrap { position: fixed; left: 0; top: 0; width: 100%; height: 100%; } \
-#htmlWrap { width: 100% !important; height: 100% !important; } \
-#sectionWrap { display:none !important; }';
-document.head.appendChild(node);
-})();";
-
-        private readonly string Restore_JS = @"(function () {
-var node = document.getElementById('da1733f9ca1d');
-if (node) document.head.removeChild(node);
-})();";
-
-        #endregion
 
         private void SizeAdjuster_SizeChanged(object p, EventArgs eventArgs)
         {
@@ -337,9 +305,7 @@ if (node) document.head.removeChild(node);
 
         public void RefreshBrowser()
         {
-            if (!Configuration.AppliesStyleSheet)
-                StyleSheetApplied = false;
-
+            StyleSheetApplied = false;
             Browser.Reload();
         }
 
@@ -418,10 +384,6 @@ if (node) document.head.removeChild(node);
                 proxy_cef = proxy;
             }
 
-            //AddLog(2, "[CefEOBrowser] Proxy " + proxy);
-            //AddLog(2, "[CefEOBrowser] Proxy_cef " + proxy_cef);
-            //AddLog(2, "[CefEOBrowser] Page " + Configuration.LogInPageURL);
-
             if (Cef_started)
             {
                 MessageBox.Show("実行中のプロキシ設定の変更はサポートされていません。\r\n七四式電子観測儀を再起動してください。", "CefEOBrowser");
@@ -429,7 +391,6 @@ if (node) document.head.removeChild(node);
             }
             else
             {
-                // Start Cef Browser
                 if (Configuration.IsEnabled)
                 {
                     InitializeChromium(proxy_cef, Configuration.LogInPageURL);
@@ -460,13 +421,13 @@ if (node) document.head.removeChild(node);
                         if (frame.Name == "game_frame")
                         {
                             has_game_frame = true;
-                            frame.ExecuteJavaScriptAsync(Restore_JS);
+                            frame.ExecuteJavaScriptAsync(string.Format(Properties.Resources.Restore_JS, StyleClassID));
                             break;
                         }
                     }
                     if (has_game_frame)
                     {
-                        browser.MainFrame.ExecuteJavaScriptAsync(Restore_JS);
+                        browser.MainFrame.ExecuteJavaScriptAsync(string.Format(Properties.Resources.Restore_JS, StyleClassID));
                         StyleSheetApplied = false;
                     }
                 }
@@ -480,13 +441,13 @@ if (node) document.head.removeChild(node);
                         if (frame.Name == "game_frame")
                         {
                             has_game_frame = true;
-                            frame.ExecuteJavaScriptAsync(Frame_JS);
+                            frame.ExecuteJavaScriptAsync(string.Format(Properties.Resources.Frame_JS, StyleClassID));
                             break;
                         }
                     }
                     if (has_game_frame)
                     {
-                        browser.MainFrame.ExecuteJavaScriptAsync(Page_JS);
+                        browser.MainFrame.ExecuteJavaScriptAsync(string.Format(Properties.Resources.Page_JS, StyleClassID));
                         StyleSheetApplied = true;
                     }
                 }
@@ -639,9 +600,7 @@ if (node) document.head.removeChild(node);
             BrowserHost.Connect(ServerUri + "/BrowserHost");
             BrowserHost.Faulted += BrowserHostChannel_Faulted;
 
-
             ConfigurationChanged(BrowserHost.Proxy.Configuration);
-
 
             // ウィンドウの親子設定＆ホストプロセスから接続してもらう
             BrowserHost.Proxy.ConnectToBrowser(this.Handle);
@@ -653,7 +612,6 @@ if (node) document.head.removeChild(node);
             });
             HeartbeatTimer.Interval = 2000; // 2秒ごと　
             HeartbeatTimer.Start();
-
 
             BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.GetIconResource());
         }
@@ -818,6 +776,11 @@ if (node) document.head.removeChild(node);
         {
             Browser.ShowDevTools();
         }
+
+        private void FormBrowser_Activated(object sender, EventArgs e)
+        {
+            Browser.Focus();
+        }
     }
 
     public class ToolStripOverride : ToolStripProfessionalRenderer
@@ -877,7 +840,7 @@ if (node) document.head.removeChild(node);
 
         public void OnBeforeClose(IWebBrowser browserControl, CefSharp.IBrowser browser)
         {
-            //nothing
+            //
         }
     }
 
