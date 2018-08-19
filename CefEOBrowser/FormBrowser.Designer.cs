@@ -147,6 +147,7 @@
             this.ToolMenu_ScreenShot.Name = "ToolMenu_ScreenShot";
             this.ToolMenu_ScreenShot.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_ScreenShot.Text = "スクリーンショット";
+            this.ToolMenu_ScreenShot.ToolTipText = "";
             this.ToolMenu_ScreenShot.Click += new System.EventHandler(this.ToolMenu_ScreenShot_Click);
             // 
             // toolStripSeparator1
@@ -240,6 +241,7 @@
             this.ToolMenu_Other_LastScreenShot.Name = "ToolMenu_Other_LastScreenShot";
             this.ToolMenu_Other_LastScreenShot.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_LastScreenShot.Text = "直前のスクリーンショット(&P)";
+            this.ToolMenu_Other_LastScreenShot.DropDownOpening += new System.EventHandler(this.ToolMenu_Other_LastScreenShot_DropDownOpening);
             // 
             // toolStripSeparator10
             // 

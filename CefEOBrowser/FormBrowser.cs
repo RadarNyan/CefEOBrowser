@@ -135,7 +135,7 @@ namespace CefEOBrowser
 
             // スクリーンショットプレビューコントロールの追加
             {
-                double zoomrate = 0.5;
+                double zoomrate = 0.25;
                 var control = new PictureBox();
                 control.Name = "ToolMenu_Other_LastScreenShot_Image";
                 control.SizeMode = PictureBoxSizeMode.Zoom;
@@ -299,8 +299,33 @@ namespace CefEOBrowser
 
         private Bitmap TakeScreenShot(bool is32bpp)
         {
-            // throw new NotImplementedException();
-            return new Bitmap(100, 100, is32bpp ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
+            if (!StyleSheetApplied)
+            {
+                MessageBox.Show("スタイルシート適用しないどスクリーンショットできません。\r\nスタイルシートを適用してください。", "CefEOBrowser");
+                return null;
+            }
+
+            var screenshot = PointToScreen(Browser.Location);
+            if (ToolMenu.Visible)
+            {
+                switch (ToolMenu.Dock)
+                {
+                    case DockStyle.Left:
+                        screenshot.X += ToolMenu.Width;
+                        break;
+                    case DockStyle.Top:
+                        screenshot.Y += ToolMenu.Height;
+                        break;
+                }
+            }
+
+            var image = new Bitmap(Browser.Width, Browser.Height, PixelFormat.Format24bppRgb);
+            using (var g = Graphics.FromImage(image))
+            {
+                g.CopyFromScreen(screenshot.X, screenshot.Y, 0, 0, image.Size);
+            }
+
+            return image;
         }
 
         public void RefreshBrowser()
@@ -774,12 +799,31 @@ namespace CefEOBrowser
 
         private void ToolMenu_ScreenShot_Click(object sender, EventArgs e)
         {
-            Browser.ShowDevTools();
+            SaveScreenShot();
+            //Browser.ShowDevTools();
         }
 
         private void FormBrowser_Activated(object sender, EventArgs e)
         {
             Browser.Focus();
+        }
+
+        private void ToolMenu_Other_LastScreenShot_DropDownOpening(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var fs = new FileStream(_lastScreenShotPath, FileMode.Open, FileAccess.Read))
+                {
+                    if (ToolMenu_Other_LastScreenShot_Control.Image != null)
+                        ToolMenu_Other_LastScreenShot_Control.Image.Dispose();
+
+                    ToolMenu_Other_LastScreenShot_Control.Image = Image.FromStream(fs);
+                }
+            }
+            catch (Exception)
+            {
+                // *ぷちっ*
+            }
         }
     }
 
