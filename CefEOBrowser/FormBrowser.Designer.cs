@@ -143,12 +143,12 @@
             // 
             // ToolMenu_ScreenShot
             // 
+            this.ToolMenu_ScreenShot.AutoToolTip = false;
             this.ToolMenu_ScreenShot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.ToolMenu_ScreenShot.Name = "ToolMenu_ScreenShot";
             this.ToolMenu_ScreenShot.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_ScreenShot.Text = "スクリーンショット";
-            this.ToolMenu_ScreenShot.ToolTipText = "";
-            this.ToolMenu_ScreenShot.Click += new System.EventHandler(this.ToolMenu_ScreenShot_Click);
+            this.ToolMenu_ScreenShot.Click += new System.EventHandler(this.ToolMenu_Other_ScreenShot_Click);
             // 
             // toolStripSeparator1
             // 
@@ -174,7 +174,7 @@
             this.ToolMenu_Mute.Name = "ToolMenu_Mute";
             this.ToolMenu_Mute.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_Mute.Text = "ミュート";
-            this.ToolMenu_Mute.Click += new System.EventHandler(this.ToolMenu_Mute_Click);
+            this.ToolMenu_Mute.Click += new System.EventHandler(this.ToolMenu_Other_Mute_Click);
             // 
             // toolStripSeparator3
             // 
@@ -187,7 +187,7 @@
             this.ToolMenu_Refresh.Name = "ToolMenu_Refresh";
             this.ToolMenu_Refresh.Size = new System.Drawing.Size(23, 22);
             this.ToolMenu_Refresh.Text = "更新";
-            this.ToolMenu_Refresh.Click += new System.EventHandler(this.ToolMenu_Refresh_Click);
+            this.ToolMenu_Refresh.Click += new System.EventHandler(this.ToolMenu_Other_Refresh_Click);
             // 
             // ToolMenu_NavigateToLogInPage
             // 
@@ -229,8 +229,10 @@
             // ToolMenu_Other_ScreenShot
             // 
             this.ToolMenu_Other_ScreenShot.Name = "ToolMenu_Other_ScreenShot";
+            this.ToolMenu_Other_ScreenShot.ShortcutKeys = System.Windows.Forms.Keys.F2;
             this.ToolMenu_Other_ScreenShot.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_ScreenShot.Text = "スクリーンショット(&S)";
+            this.ToolMenu_Other_ScreenShot.Click += new System.EventHandler(this.ToolMenu_Other_ScreenShot_Click);
             // 
             // ToolMenu_Other_LastScreenShot
             // 
@@ -429,8 +431,10 @@
             // ToolMenu_Other_Mute
             // 
             this.ToolMenu_Other_Mute.Name = "ToolMenu_Other_Mute";
+            this.ToolMenu_Other_Mute.ShortcutKeys = System.Windows.Forms.Keys.F7;
             this.ToolMenu_Other_Mute.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_Mute.Text = "ミュート(&M)";
+            this.ToolMenu_Other_Mute.Click += new System.EventHandler(this.ToolMenu_Other_Mute_Click);
             // 
             // toolStripSeparator7
             // 
@@ -440,8 +444,10 @@
             // ToolMenu_Other_Refresh
             // 
             this.ToolMenu_Other_Refresh.Name = "ToolMenu_Other_Refresh";
+            this.ToolMenu_Other_Refresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.ToolMenu_Other_Refresh.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_Refresh.Text = "更新(&R)";
+            this.ToolMenu_Other_Refresh.Click += new System.EventHandler(this.ToolMenu_Other_Refresh_Click);
             // 
             // ToolMenu_Other_NavigateToLogInPage
             // 

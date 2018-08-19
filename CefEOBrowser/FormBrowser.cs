@@ -43,7 +43,8 @@ namespace CefEOBrowser
             Browser = new ChromiumWebBrowser(url)
             {
                 LifeSpanHandler = new BrowserLifeSpanHandler(),
-                MenuHandler = new BrowserMenuHandler()
+                MenuHandler = new BrowserMenuHandler(),
+                KeyboardHandler = new BrowserKeyboardHandler()
             };
             this.SizeAdjuster.Controls.Add(Browser);
             Browser.Dock = DockStyle.Fill;
@@ -604,7 +605,7 @@ namespace CefEOBrowser
 
         private void AddLog(int priority, string message)
         {
-            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.AddLog(priority, message));
+            //BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.AddLog(priority, message));
         }
 
         private void SendErrorReport(string exceptionName, string message)
@@ -657,17 +658,6 @@ namespace CefEOBrowser
             }
         }
 
-        private void ToolMenu_Refresh_Click(object sender, EventArgs e)
-        {
-            if (!Configuration.ConfirmAtRefresh ||
-                MessageBox.Show("再読み込みします。\r\nよろしいですか？", "確認",
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2)
-                == System.Windows.Forms.DialogResult.OK)
-            {
-                RefreshBrowser();
-            }
-        }
-
         private void ToolMenu_NavigateToLogInPage_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("ログインページへ移動します。\r\nよろしいですか？", "確認",
@@ -676,19 +666,6 @@ namespace CefEOBrowser
             {
                 Navigate(Configuration.LogInPageURL);
             }
-        }
-
-        private void ToolMenu_Mute_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                _volumeManager.ToggleMute();
-            }
-            catch (Exception)
-            {
-                System.Media.SystemSounds.Beep.Play();
-            }
-            SetVolumeState();
         }
 
         private void ToolMenu_Zoom_DropDownOpening(object sender, EventArgs e)
@@ -797,12 +774,6 @@ namespace CefEOBrowser
             ConfigurationUpdated();
         }
 
-        private void ToolMenu_ScreenShot_Click(object sender, EventArgs e)
-        {
-            SaveScreenShot();
-            //Browser.ShowDevTools();
-        }
-
         private void FormBrowser_Activated(object sender, EventArgs e)
         {
             Browser.Focus();
@@ -824,6 +795,35 @@ namespace CefEOBrowser
             {
                 // *ぷちっ*
             }
+        }
+
+        private void ToolMenu_Other_Refresh_Click(object sender, EventArgs e)
+        {
+            if (!Configuration.ConfirmAtRefresh ||
+                MessageBox.Show("再読み込みします。\r\nよろしいですか？", "確認",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2)
+                == System.Windows.Forms.DialogResult.OK)
+            {
+                RefreshBrowser();
+            }
+        }
+
+        private void ToolMenu_Other_ScreenShot_Click(object sender, EventArgs e)
+        {
+            SaveScreenShot();
+        }
+
+        private void ToolMenu_Other_Mute_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _volumeManager.ToggleMute();
+            }
+            catch (Exception)
+            {
+                System.Media.SystemSounds.Beep.Play();
+            }
+            SetVolumeState();
         }
     }
 
@@ -911,6 +911,114 @@ namespace CefEOBrowser
         public bool RunContextMenu(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// ショートカットキー処理
+    /// </summary>
+    public class BrowserKeyboardHandler : IKeyboardHandler
+    {
+        public bool OnKeyEvent(IWebBrowser browserControl, CefSharp.IBrowser browser, KeyType type, int windowsKeyCode, int nativeKeyCode, CefEventFlags modifiers, bool isSystemKey)
+        {
+            return false;
+        }
+
+        public bool OnPreKeyEvent(IWebBrowser browserControl, CefSharp.IBrowser browser, KeyType type, int windowsKeyCode, int nativeKeyCode, CefEventFlags modifiers, bool isSystemKey, ref bool isKeyboardShortcut)
+        {
+            const int WM_SYSKEYDOWN = 0x104;
+            const int WM_KEYDOWN = 0x100;
+            const int WM_KEYUP = 0x101;
+            const int WM_SYSKEYUP = 0x105;
+            const int WM_CHAR = 0x102;
+            const int WM_SYSCHAR = 0x106;
+            const int VK_TAB = 0x9;
+
+            bool result = false;
+
+            isKeyboardShortcut = false;
+
+            // Don't deal with TABs by default:
+            // TODO: Are there any additional ones we need to be careful of?
+            // i.e. Escape, Return, etc...?
+            if (windowsKeyCode == VK_TAB)
+            {
+                return result;
+            }
+
+            Control control = browserControl as Control;
+            int msgType = 0;
+            switch (type)
+            {
+                case KeyType.RawKeyDown:
+                    if (isSystemKey)
+                    {
+                        msgType = WM_SYSKEYDOWN;
+                    }
+                    else
+                    {
+                        msgType = WM_KEYDOWN;
+                    }
+                    break;
+                case KeyType.KeyUp:
+                    if (isSystemKey)
+                    {
+                        msgType = WM_SYSKEYUP;
+                    }
+                    else
+                    {
+                        msgType = WM_KEYUP;
+                    }
+                    break;
+                case KeyType.Char:
+                    if (isSystemKey)
+                    {
+                        msgType = WM_SYSCHAR;
+                    }
+                    else
+                    {
+                        msgType = WM_CHAR;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            // We have to adapt from CEF's UI thread message loop to our fronting WinForm control here.
+            // So, we have to make some calls that Application.Run usually ends up handling for us:
+            PreProcessControlState state = PreProcessControlState.MessageNotNeeded;
+            // We can't use BeginInvoke here, because we need the results for the return value
+            // and isKeyboardShortcut. In theory this shouldn't deadlock, because
+            // atm this is the only synchronous operation between the two threads.
+            control.Invoke(new Action(() =>
+            {
+                Message msg = new Message() { HWnd = control.Handle, Msg = msgType, WParam = new IntPtr(windowsKeyCode), LParam = new IntPtr(nativeKeyCode) };
+
+                // First comes Application.AddMessageFilter related processing:
+                // 99.9% of the time in WinForms this doesn't do anything interesting.
+                bool processed = Application.FilterMessage(ref msg);
+                if (processed)
+                {
+                    state = PreProcessControlState.MessageProcessed;
+                }
+                else
+                {
+                    // Next we see if our control (or one of its parents)
+                    // wants first crack at the message via several possible Control methods.
+                    // This includes things like Mnemonics/Accelerators/Menu Shortcuts/etc...
+                    state = control.PreProcessControlMessage(ref msg);
+                }
+            }));
+            if (state == PreProcessControlState.MessageNeeded)
+            {
+                // TODO: Determine how to track MessageNeeded for OnKeyEvent.
+                isKeyboardShortcut = true;
+            }
+            else if (state == PreProcessControlState.MessageProcessed)
+            {
+                // Most of the interesting cases get processed by PreProcessControlMessage.
+                result = true;
+            }
+            return result;
         }
     }
 }
