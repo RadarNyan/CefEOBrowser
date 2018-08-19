@@ -42,7 +42,8 @@ namespace CefEOBrowser
 
             Browser = new ChromiumWebBrowser(url)
             {
-                LifeSpanHandler = new BrowserLifeSpanHandler()
+                LifeSpanHandler = new BrowserLifeSpanHandler(),
+                MenuHandler = new BrowserMenuHandler()
             };
             this.SizeAdjuster.Controls.Add(Browser);
             Browser.Dock = DockStyle.Fill;
@@ -877,6 +878,32 @@ if (node) document.head.removeChild(node);
         public void OnBeforeClose(IWebBrowser browserControl, CefSharp.IBrowser browser)
         {
             //nothing
+        }
+    }
+
+    /// <summary>
+    /// コンテキストメニューを無効化にする
+    /// </summary>
+    public class BrowserMenuHandler : IContextMenuHandler
+    {
+        public void OnBeforeContextMenu(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
+        {
+            model.Clear();
+        }
+
+        public bool OnContextMenuCommand(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
+        {
+            return false;
+        }
+
+        public void OnContextMenuDismissed(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame)
+        {
+            //
+        }
+
+        public bool RunContextMenu(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
+        {
+            return false;
         }
     }
 }
