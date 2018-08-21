@@ -42,10 +42,15 @@ namespace CefEOBrowser
 
             Browser = new ChromiumWebBrowser(url)
             {
+                FocusHandler = null,
                 LifeSpanHandler = new BrowserLifeSpanHandler(),
                 MenuHandler = new BrowserMenuHandler(),
                 KeyboardHandler = new BrowserKeyboardHandler()
             };
+
+            Browser.AddressChanged += Browser_AddressChanged;
+            Browser.FrameLoadStart += Browser_FrameLoadEnd;
+
             this.SizeAdjuster.Controls.Add(Browser);
             Browser.Dock = DockStyle.Fill;
             Cef_started = true;
@@ -53,9 +58,26 @@ namespace CefEOBrowser
             libraryLoader.Dispose();
         }
 
+        private void Browser_FrameLoadEnd(object sender, FrameLoadStartEventArgs e)
+        {
+            if (!GamePageLoaded)
+                return;
+
+            if (e.Frame.Name == "game_frame")
+                ApplyStyleSheet();
+        }
+
+        private void Browser_AddressChanged(object sender, AddressChangedEventArgs e)
+        {
+            if (e.Address == KanColleUrl)
+                GamePageLoaded = true;
+        }
+
         private readonly Size KanColleSize = new Size(1200, 720);
 
         private readonly string StyleClassID = Guid.NewGuid().ToString().Substring(0, 8);
+
+        private readonly string KanColleUrl = "http://www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/";
 
         // FormBrowserHostの通信サーバ
         private string ServerUri;
@@ -73,6 +95,8 @@ namespace CefEOBrowser
         /// スタイルシートの変更が適用されているか
         /// </summary>
         private bool StyleSheetApplied;
+
+        private bool GamePageLoaded;
 
         private void SizeAdjuster_SizeChanged(object p, EventArgs eventArgs)
         {
@@ -208,12 +232,6 @@ namespace CefEOBrowser
         {
             IsKanColleLoaded = true;
 
-            //ロード直後の適用ではレイアウトがなぜか崩れるのでこのタイミングでも適用
-            if (!StyleSheetApplied)
-            {
-                ApplyStyleSheet();
-                ApplyZoom();
-            }
             // DestroyDMMreloadDialog();
 
             //起動直後はまだ音声が鳴っていないのでミュートできないため、この時点で有効化
@@ -331,7 +349,10 @@ namespace CefEOBrowser
 
         public void RefreshBrowser()
         {
+            GamePageLoaded = false;
             StyleSheetApplied = false;
+            if (Browser.Address != KanColleUrl && Browser.Address != Configuration.LogInPageURL)
+                Browser.Dock = DockStyle.Fill;
             Browser.Reload();
         }
 
@@ -397,6 +418,10 @@ namespace CefEOBrowser
 
         public void Navigate(string url)
         {
+            GamePageLoaded = false;
+            StyleSheetApplied = false;
+            if (url != KanColleUrl && Browser.Address != Configuration.LogInPageURL)
+                Browser.Dock = DockStyle.Fill;
             Browser.Load(url);
         }
 
@@ -455,6 +480,7 @@ namespace CefEOBrowser
                     {
                         browser.MainFrame.ExecuteJavaScriptAsync(string.Format(Properties.Resources.Restore_JS, StyleClassID));
                         StyleSheetApplied = false;
+                        Browser.Dock = DockStyle.Fill;
                     }
                 }
                 else if (!StyleSheetApplied && Configuration.AppliesStyleSheet)
@@ -824,6 +850,16 @@ namespace CefEOBrowser
                 System.Media.SystemSounds.Beep.Play();
             }
             SetVolumeState();
+        }
+
+        private void ToolMenu_Other_Navigate_Click(object sender, EventArgs e)
+        {
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.RequestNavigation(Browser.Address));
+        }
+
+        private void ToolMenu_Other_ClearCache_Click(object sender, EventArgs e)
+        {
+            Browser.ShowDevTools();
         }
     }
 

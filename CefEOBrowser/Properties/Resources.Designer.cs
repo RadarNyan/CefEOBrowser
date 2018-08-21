@@ -61,7 +61,7 @@ namespace CefEOBrowser.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !function(){{var t=document.getElementById(&apos;{0}&apos;);t&amp;&amp;document.head.removeChild(t),(t=document.createElement(&quot;style&quot;)).id=&apos;{0}&apos;,t.innerHTML=&quot;#flashWrap {{ position: fixed; left: 0; top: 0; width: 100%; height: 100%; }} #htmlWrap {{ width: 100% !important; height: 100% !important; }} #sectionWrap {{ display:none !important; }}&quot;,document.head.appendChild(t)}}();.
+        ///   Looks up a localized string similar to function applyStyle(){{var e=document.getElementById(&quot;{0}&quot;);e&amp;&amp;document.head.removeChild(e),(e=document.createElement(&quot;style&quot;)).id=&quot;{0}&quot;,e.innerHTML=&quot;#flashWrap {{ position: fixed; left: 0; top: 0; width: 100%; height: 100%; }} #htmlWrap {{ width: 100% !important; height: 100% !important; }} #sectionWrap {{ display:none !important; }}&quot;,document.head.appendChild(e)}}&quot;loading&quot;===document.readyState?document.addEventListener(&quot;DOMContentLoaded&quot;,applyStyle):applyStyle();.
         /// </summary>
         internal static string Frame_JS {
             get {
@@ -70,7 +70,7 @@ namespace CefEOBrowser.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !function(){{var i=document.getElementById(&apos;{0}&apos;);i&amp;&amp;document.head.removeChild(i),(i=document.createElement(&quot;style&quot;)).id=&apos;{0}&apos;,i.innerHTML=&quot;body {{ visibility: hidden; overflow: hidden; }} div #block_background {{ visibility: visible; }} div #alert {{ visibility: visible; overflow: scroll; top: 0 !important; left: 3% !important; width: 90% !important; height: 100%; padding:2%;}} div.dmm-ntgnavi {{ display: none; }} #area-game {{ position: fixed; left: 0; top: 0; width: 100%; height: 100%; }} #game_frame {{  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to function applyStyle(){{var e=document.getElementById(&quot;{0}&quot;);e&amp;&amp;document.head.removeChild(e),(e=document.createElement(&quot;style&quot;)).id=&quot;{0}&quot;,e.innerHTML=&quot;body {{ visibility: hidden; overflow: hidden; }} div #block_background {{ visibility: visible; }} div #alert {{ visibility: visible; overflow: scroll; top: 0 !important; left: 3% !important; width: 90% !important; height: 100%; padding:2%;}} div.dmm-ntgnavi {{ display: none; }} #area-game {{ position: fixed; left: 0; top: 0; width: 100%; height: 100%; }} #game [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Page_JS {
             get {

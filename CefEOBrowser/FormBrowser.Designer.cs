@@ -460,6 +460,7 @@
             this.ToolMenu_Other_Navigate.Name = "ToolMenu_Other_Navigate";
             this.ToolMenu_Other_Navigate.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_Navigate.Text = "移動(&N)...";
+            this.ToolMenu_Other_Navigate.Click += new System.EventHandler(this.ToolMenu_Other_Navigate_Click);
             // 
             // toolStripSeparator8
             // 
@@ -479,6 +480,7 @@
             this.ToolMenu_Other_ClearCache.Name = "ToolMenu_Other_ClearCache";
             this.ToolMenu_Other_ClearCache.Size = new System.Drawing.Size(233, 22);
             this.ToolMenu_Other_ClearCache.Text = "キャッシュのクリア(&C)";
+            this.ToolMenu_Other_ClearCache.Click += new System.EventHandler(this.ToolMenu_Other_ClearCache_Click);
             // 
             // toolStripSeparator9
             // 
