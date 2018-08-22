@@ -631,7 +631,7 @@ namespace CefEOBrowser
 
         private void AddLog(int priority, string message)
         {
-            //BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.AddLog(priority, message));
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.AddLog(priority, message));
         }
 
         private void SendErrorReport(string exceptionName, string message)
