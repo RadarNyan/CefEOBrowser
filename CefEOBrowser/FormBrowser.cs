@@ -51,6 +51,7 @@ namespace CefEOBrowser
 
             Browser.AddressChanged += Browser_AddressChanged;
             Browser.FrameLoadStart += Browser_FrameLoadEnd;
+            Browser.BrowserSettings.StandardFontFamily = "Microsoft YaHei";
 
             this.SizeAdjuster.Controls.Add(Browser);
             Browser.Dock = DockStyle.Fill;
