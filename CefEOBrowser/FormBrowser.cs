@@ -55,7 +55,8 @@ namespace CefEOBrowser
             Browser.FrameLoadStart += Browser_FrameLoadEnd;
             Browser.BrowserSettings.StandardFontFamily = "Microsoft YaHei";
 
-            this.SizeAdjuster.Controls.Add(Browser);
+            SizeAdjuster.Controls.Add(Browser);
+            SizeAdjuster.SizeChanged += SizeAdjuster_SizeChanged;
             Browser.Dock = DockStyle.Fill;
             Cef_started = true;
 
@@ -268,8 +269,8 @@ namespace CefEOBrowser
             Configuration = conf;
 
             SizeAdjuster.AutoScroll = Configuration.IsScrollable;
-            //ToolMenu_Other_Zoom_Fit.Checked = Configuration.ZoomFit;
-            //ApplyZoom();
+            ToolMenu_Other_Zoom_Fit.Checked = Configuration.ZoomFit;
+            ApplyZoom();
             ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
             ToolMenu.Dock = (DockStyle)Configuration.ToolMenuDockStyle;
             ToolMenu.Visible = Configuration.IsToolMenuVisible;
@@ -452,12 +453,28 @@ namespace CefEOBrowser
 
             try
             {
-                zoomFactor = zoomRate / 100.0;
-                if (zoomRate == 66)
-                    zoomFactor = 2 / 3.0;
+                if (fit) {
+                    int maxWidth = SizeAdjuster.Width;
+                    int maxHeight = SizeAdjuster.Height;
+                    if (maxHeight * (KanColleSize.Width * 1.00 / KanColleSize.Height) < maxWidth)
+                    {
+                        zoomFactor = maxHeight * 1.00 / KanColleSize.Height;
+                    } else {
+                        zoomFactor = maxWidth * 1.00 / KanColleSize.Width;
+                    }
+                    if (1.0 < zoomFactor && zoomFactor < 1.05)
+                        zoomFactor = 1;
+                } else {
+                    if (zoomRate == 66) {
+                        zoomFactor = 2 / 3.0;
+                    } else {
+                        zoomFactor = zoomRate / 100.0;
+                    }
+                }
+
                 double zoomLevel = Math.Log(zoomFactor, 1.2);
-                Browser.SetZoomLevel(zoomLevel);
-                
+                if (Cef.IsInitialized)
+                    Browser.SetZoomLevel(zoomLevel);
 
                 if (StyleSheetApplied)
                 {
@@ -473,10 +490,10 @@ namespace CefEOBrowser
                     switch (BrowserUILanguage)
                     {
                         case "zh":
-                            ToolMenu_Other_Zoom_Current.Text = string.Format("当前：自适应");
+                            ToolMenu_Other_Zoom_Current.Text = $"当前：自适应 ({zoomFactor * 100:0.00}%)";
                             break;
                         default:
-                            ToolMenu_Other_Zoom_Current.Text = string.Format("現在: ぴったり");
+                            ToolMenu_Other_Zoom_Current.Text = $"現在: ぴったり ({zoomFactor * 100:0.00}%)";
                             break;
                     }
                 }
@@ -1033,6 +1050,12 @@ namespace CefEOBrowser
         private void ToolMenu_Other_ClearCache_Click(object sender, EventArgs e)
         {
             Browser.ShowDevTools();
+        }
+
+        private void ToolMenu_Other_DropDownOpening(object sender, EventArgs e)
+        {
+            var list = ToolMenu_Zoom.DropDownItems.Cast<ToolStripItem>().ToArray();
+            ToolMenu_Other_Zoom.DropDownItems.AddRange(list);
         }
     }
 
