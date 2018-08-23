@@ -134,4 +134,9 @@
   </Target>
   <Import Project="..\packages\CefSharp.Common.65.0.1\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.65.0.1\build\CefSharp.Common.targets')" />
   <Import Project="..\packages\CefSharp.WinForms.65.0.1\build\CefSharp.WinForms.targets" Condition="Exists('..\packages\CefSharp.WinForms.65.0.1\build\CefSharp.WinForms.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>rem ren $(ProjectDir)$(OutDir)$(CefSharpTargetDir)\locales\ja.pak ja.keep
+del /q $(ProjectDir)$(OutDir)$(CefSharpTargetDir)\locales\*.pak
+rem ren $(ProjectDir)$(OutDir)$(CefSharpTargetDir)\locales\ja.keep ja.pak</PostBuildEvent>
+  </PropertyGroup>
 </Project>

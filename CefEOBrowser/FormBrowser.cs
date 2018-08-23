@@ -37,6 +37,8 @@ namespace CefEOBrowser
             settings.BrowserSubprocessPath = Path.Combine(cef_path, @"bin\CefSharp.BrowserSubprocess.exe");
             settings.LogSeverity = LogSeverity.Disable;
             settings.CefCommandLineArgs.Add("proxy-server", proxy);
+            settings.Locale = "ja";
+            settings.AcceptLanguageList = "ja-JP";
             // settings.DisableGpuAcceleration();
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
 
