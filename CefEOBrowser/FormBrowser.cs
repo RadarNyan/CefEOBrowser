@@ -326,17 +326,17 @@ namespace CefEOBrowser
                                 break;
                         }
 
-                        string path = string.Format("{0}\\{1:yyyyMMdd_HHmmssff}.{2}", folderPath, DateTime.Now, ext);
+                        string path = $"{folderPath}\\{DateTime.Now:yyyyMMdd_HHmmssff}.{ext}";
                         image.Save(path, imgFormat);
                         _lastScreenShotPath = path;
 
                         switch (BrowserUILanguage)
                         {
                             case "zh":
-                                AddLog(2, string.Format("已保存截图文件 {0}", path));
+                                AddLog(2, $"已保存截图文件 {path}");
                                 break;
                             default:
-                                AddLog(2, string.Format("スクリーンショットを {0} に保存しました。", path));
+                                AddLog(2, $"スクリーンショットを {path} に保存しました。");
                                 break;
                         }
                     }
@@ -502,10 +502,10 @@ namespace CefEOBrowser
                     switch (BrowserUILanguage)
                     {
                         case "zh":
-                            ToolMenu_Other_Zoom_Current.Text = string.Format("当前：{0}%", zoomRate);
+                            ToolMenu_Other_Zoom_Current.Text = $"当前：{zoomRate}%";
                             break;
                         default:
-                            ToolMenu_Other_Zoom_Current.Text = string.Format("現在: {0}%", zoomRate);
+                            ToolMenu_Other_Zoom_Current.Text = $"現在: {zoomRate}%";
                             break;
                     }
                 }
