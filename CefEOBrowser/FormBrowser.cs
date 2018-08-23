@@ -42,6 +42,7 @@ namespace CefEOBrowser
 
             Browser = new ChromiumWebBrowser(url)
             {
+                RequestHandler = new BrowserRequestHandler(),
                 FocusHandler = null,
                 LifeSpanHandler = new BrowserLifeSpanHandler(),
                 MenuHandler = new BrowserMenuHandler(),
@@ -891,6 +892,21 @@ namespace CefEOBrowser
 
             if (m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
                 m.Result = (IntPtr)MA_ACTIVATE;
+        }
+    }
+
+    /// <summary>
+    /// "White Screen" workaround
+    /// </summary>
+    public class BrowserRequestHandler : CefSharp.Handler.DefaultRequestHandler
+    {
+        public override CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
+        {
+            if (request.Url.Contains("rt.gsspat.jp")) {
+                return CefReturnValue.Cancel;
+            } else {
+                return CefReturnValue.Continue;
+            }
         }
     }
 
