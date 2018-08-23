@@ -1,29 +1,32 @@
 # CefEOBrowser
-Cef (Chromium Embedded Framework) based Browser for ElectronicObserver (https://github.com/andanteyk/ElectronicObserver)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1qcyyjtf64ohk6mu?svg=true)](https://ci.appveyor.com/project/RadarNyan/cefeobrowser)
+#### Cef based Browser for ElectronicObserver
+This is a drop-in replacement EOBrowser.exe for [ElectronicObserver](https://github.com/andanteyk/ElectronicObserver)  
+This project is now part of [my fork of ElectronicObserver](https://github.com/RadarNyan/ElectronicObserver)
 
+#### Introduction
+Since August 2018, KanColle enters 2nd Sequence, which moved from Flash to HTML5, dropping support for Internet Explorer. So I restarted my once abandoned project to make it possible for ElectronicObserver to utilize Chromium as its browser.
 
----
+This project now has Japanese / Chinese UI, to match the language of ElectronicObserver using it. If you want to contribute more UI language, please check "For Developers" section down below.
 
-This project is intended to create a drop-in replacement EOBrowser.exe for ElectronicObserver.
+This project contains some code copied from [ElectronicObserver](https://github.com/andanteyk/ElectronicObserver), credits goes to everyone contributed to that project :)
 
-As _Kantai Collection_ (web game) updating to 2nd season, it's moving from Flash to HTML5. Currently ElectronicObserver is using IE based browser which has stopped feature developing since 2013 with the release of IE11, which could introduce compatibility problem latest web technolegies. So I restarted my once abandoned project to make it possible for ElectronicObserver to utilize Chromium as built-in browser.
+#### License
+This Project is MIT Licensed
 
-I would only continue this project if _Kantai Collection_ (web game) 2nd season is still playable with ElectronicObserver (otherwise what's the point?) Currently there are still features missing and a lot parts uncompleted, I would finish them after the release of 2nd season. ~I might also abandon this project (again) if 2nd season works just fine with IE11 and I'm feeling lazy.~
+#### Libraries used
+* [CefSharp](https://github.com/cefsharp/CefSharp) Chromium Embedded Framework - [BSD](https://opensource.org/licenses/BSD-3-Clause)
 
-This project would have a Japanese UI for consistency (since ElectronicObserver is in Japanese). I'm only writing this readme in English because I'm more familiar with it and also I'm not good at writing in Japanese.
+#### How to build
+1. Clone this repository, make sure you're on master branch
+2. Load it with Visual Studio 2017, earlier versions not tested
+3. Restore nuget packages (Cef.WinForms)
+4. Build
 
----
+#### How to use
+1. Copy files (EOBrowser.exe~) and folder (CefEOBrowser) from output folder to ElectronicObserver directory, replace original EOBrowser.exe file.
+2. Run ElectronicObserver.exe and CefEOBrowser should be loaded.
 
-This project uses CefSharp (https://github.com/cefsharp/CefSharp) for Chromium Embedded Framework.
-
-This project contains code copied directly from ElectronicObserver (https://github.com/andanteyk/ElectronicObserver), credits goes to everyone contributed to that project.
-
----
-
-To build: clone this repository, load with VS2017, restore nuget packages (Cef.WinForms), and build.
-
-Copy files and folder from output folder to ElectronicObserver directory, replace original EOBrowser.exe file.
-
-Run ElectronicObserver.exe and CefEOBrowser should be loaded.
+#### For Developers
+This project contains a "submodule" branch which can be used as a submodule for ElectronicObserver forks. Check my fork's commit [46da84](https://github.com/RadarNyan/ElectronicObserver/commit/46da847db6f5148a134247e47d58ee4b9679b5b8) and [e65c55](https://github.com/RadarNyan/ElectronicObserver/commit/e65c55266057b7c39e4e6d2753deb4f43e025402) for example.
