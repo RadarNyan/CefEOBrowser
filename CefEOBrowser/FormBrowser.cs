@@ -83,6 +83,8 @@ namespace CefEOBrowser
 
         private readonly string KanColleUrl = "http://www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/";
 
+        private string BrowserUILanguage;
+
         // FormBrowserHostの通信サーバ
         private string ServerUri;
 
@@ -133,12 +135,48 @@ namespace CefEOBrowser
             get { return (PictureBox)((ToolStripControlHost)ToolMenu_Other_LastScreenShot.DropDownItems["ToolMenu_Other_LastScreenShot_ImageHost"]).Control; }
         }
 
-        public FormBrowser(string serverUri)
+        public FormBrowser(string serverUri, string browserUILanguage, Color browserBackColor)
         {
             ServerUri = serverUri;
+            BrowserUILanguage = browserUILanguage;
 
             InitializeComponent();
-            this.ToolMenu.Renderer = new ToolStripOverride(); // remove stupid rounded corner
+            ToolMenu.Renderer = new ToolStripOverride();
+            SizeAdjuster.BackColor = ToolMenu.BackColor = browserBackColor;
+            switch (BrowserUILanguage)
+            {
+                case "zh":
+                    ContextMenuTool_ShowToolMenu.Text = "显示工具条";
+                    ToolMenu_Zoom.Text = "缩放";
+                    ToolMenu_Mute.Text = "静音";
+                    ToolMenu_Refresh.Text = "刷新";
+                    ToolMenu_NavigateToLogInPage.Text = "转到登录页";
+                    ToolMenu_Other.Text = "其它";
+                    ToolMenu_Other_ScreenShot.Text = "截图(&S)";
+                    ToolMenu_Other_LastScreenShot.Text = "最后一次截图(&P)";
+                    ToolMenu_Other_LastScreenShot_OpenScreenShotFolder.Text = "打开截图文件夹(&O)";
+                    ToolMenu_Other_LastScreenShot_CopyToClipboard.Text = "复制到剪贴板(&C)";
+                    ToolMenu_Other_Zoom.Text = "缩放(&Z)";
+                    ToolMenu_Other_Zoom_Current.Text = "当前";
+                    ToolMenu_Other_Zoom_Fit.Text = "自适应";
+                    ToolMenu_Other_Volume.Text = "音量(&V)";
+                    ToolMenu_Other_Mute.Text = "静音(&M)";
+                    ToolMenu_Other_Refresh.Text = "刷新(&R)";
+                    ToolMenu_Other_NavigateToLogInPage.Text = "转到登录页(&L)";
+                    ToolMenu_Other_Navigate.Text = "转到网址(&N)...";
+                    ToolMenu_Other_AppliesStyleSheet.Text = "应用样式表";
+                    ToolMenu_Other_ClearCache.Text = "清除缓存(&C)";
+                    ToolMenu_Other_Alignment.Text = "工具条位置(&A)";
+                    ToolMenu_Other_Alignment_Top.Text = "上(&T)";
+                    ToolMenu_Other_Alignment_Bottom.Text = "下(&B)";
+                    ToolMenu_Other_Alignment_Left.Text = "左(&L)";
+                    ToolMenu_Other_Alignment_Right.Text = "右(&R)";
+                    ToolMenu_Other_Alignment_Invisible.Text = "隐藏(&I)";
+                    break;
+                default:
+                    // Default UI language is Japanese
+                    break;
+            }
 
             _volumeManager = new VolumeManager((uint)System.Diagnostics.Process.GetCurrentProcess().Id);
 
@@ -174,7 +212,15 @@ namespace CefEOBrowser
                 using (var g = Graphics.FromImage(control.Image))
                 {
                     g.Clear(SystemColors.Control);
-                    g.DrawString("スクリーンショットをまだ撮影していません。\r\n", Font, Brushes.Black, new Point(4, 4));
+                    switch (BrowserUILanguage)
+                    {
+                        case "zh":
+                            g.DrawString("还没有截过图。", Font, Brushes.Black, new Point(4, 4));
+                            break;
+                        default:
+                            g.DrawString("スクリーンショットをまだ撮影していません。", Font, Brushes.Black, new Point(4, 4));
+                            break;
+                    }
                 }
 
                 var host = new ToolStripControlHost(control, "ToolMenu_Other_LastScreenShot_ImageHost");
@@ -227,9 +273,6 @@ namespace CefEOBrowser
             ToolMenu_Other_AppliesStyleSheet.Checked = Configuration.AppliesStyleSheet;
             ToolMenu.Dock = (DockStyle)Configuration.ToolMenuDockStyle;
             ToolMenu.Visible = Configuration.IsToolMenuVisible;
-
-            //SizeAdjuster.BackColor = System.Drawing.Color.FromArgb(255,29,31,33);
-            //ToolMenu.BackColor = System.Drawing.Color.FromArgb(255, 29, 31, 33);
         }
 
         public void InitialAPIReceived()
@@ -286,13 +329,27 @@ namespace CefEOBrowser
                         image.Save(path, imgFormat);
                         _lastScreenShotPath = path;
 
-                        AddLog(2, string.Format("スクリーンショットを {0} に保存しました。", path));
-
+                        switch (BrowserUILanguage)
+                        {
+                            case "zh":
+                                AddLog(2, string.Format("已保存截图文件 {0}", path));
+                                break;
+                            default:
+                                AddLog(2, string.Format("スクリーンショットを {0} に保存しました。", path));
+                                break;
+                        }
                     }
                     catch (Exception ex)
                     {
-
-                        SendErrorReport(ex.ToString(), "スクリーンショットの保存に失敗しました。");
+                        switch (BrowserUILanguage)
+                        {
+                            case "zh":
+                                SendErrorReport(ex.ToString(), "保存截图文件失败。");
+                                break;
+                            default:
+                                SendErrorReport(ex.ToString(), "スクリーンショットの保存に失敗しました。");
+                                break;
+                        }
                     }
                 }
 
@@ -302,17 +359,32 @@ namespace CefEOBrowser
                 {
                     try
                     {
-
                         Clipboard.SetImage(image);
 
                         if ((savemode & 3) != 3)
-                            AddLog(2, "スクリーンショットをクリップボードにコピーしました。");
-
+                        {
+                            switch (BrowserUILanguage)
+                            {
+                                case "zh":
+                                    AddLog(2, "已复制截图到剪贴板。");
+                                    break;
+                                default:
+                                    AddLog(2, "スクリーンショットをクリップボードにコピーしました。");
+                                    break;
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
-
-                        SendErrorReport(ex.ToString(), "スクリーンショットのクリップボードへのコピーに失敗しました。");
+                        switch (BrowserUILanguage)
+                        {
+                            case "zh":
+                                SendErrorReport(ex.ToString(), "复制截图到剪贴板失败。");
+                                break;
+                            default:
+                                SendErrorReport(ex.ToString(), "スクリーンショットのクリップボードへのコピーに失敗しました。");
+                                break;
+                        }
                     }
                 }
             }
@@ -324,7 +396,19 @@ namespace CefEOBrowser
         {
             if (!StyleSheetApplied)
             {
-                MessageBox.Show("スタイルシート適用しないどスクリーンショットできません。\r\nスタイルシートを適用してください。", "CefEOBrowser");
+                switch (BrowserUILanguage)
+                {
+                    case "zh":
+                        MessageBox.Show(
+                            "未应用样式表时无法进行截图。\r\n" +
+                            "请先应用样式表。", "CefEOBrowser");
+                        break;
+                    default:
+                        MessageBox.Show(
+                            "スタイルシート適用しないどスクリーンショットできません。\r\n" +
+                            "スタイルシートを適用してください。", "CefEOBrowser");
+                        break;
+                }
                 return null;
             }
 
@@ -386,18 +470,42 @@ namespace CefEOBrowser
 
                 if (fit)
                 {
-                    ToolMenu_Other_Zoom_Current.Text = string.Format("現在: ぴったり");
+                    switch (BrowserUILanguage)
+                    {
+                        case "zh":
+                            ToolMenu_Other_Zoom_Current.Text = string.Format("当前：自适应");
+                            break;
+                        default:
+                            ToolMenu_Other_Zoom_Current.Text = string.Format("現在: ぴったり");
+                            break;
+                    }
                 }
                 else
                 {
-                    ToolMenu_Other_Zoom_Current.Text = string.Format("現在: {0}%", zoomRate);
+                    switch (BrowserUILanguage)
+                    {
+                        case "zh":
+                            ToolMenu_Other_Zoom_Current.Text = string.Format("当前：{0}%", zoomRate);
+                            break;
+                        default:
+                            ToolMenu_Other_Zoom_Current.Text = string.Format("現在: {0}%", zoomRate);
+                            break;
+                    }
                 }
 
 
             }
             catch (Exception ex)
             {
-                AddLog(3, "ズームの適用に失敗しました。" + ex.Message);
+                switch (BrowserUILanguage)
+                {
+                    case "zh":
+                        AddLog(3, "调整缩放失败。" + ex.Message);
+                        break;
+                    default:
+                        AddLog(3, "ズームの適用に失敗しました。" + ex.Message);
+                        break;
+                }
             }
         }
 
@@ -441,7 +549,19 @@ namespace CefEOBrowser
 
             if (Cef_started)
             {
-                MessageBox.Show("実行中のプロキシ設定の変更はサポートされていません。\r\n七四式電子観測儀を再起動してください。", "CefEOBrowser");
+                switch (BrowserUILanguage)
+                {
+                    case "zh":
+                        MessageBox.Show(
+                            "不支持运行中修改代理设置。\r\n" +
+                            "请重新启动七四式电子观测仪。", "CefEOBrowser");
+                        break;
+                    default:
+                        MessageBox.Show(
+                            "実行中のプロキシ設定の変更はサポートされていません。\r\n" +
+                            "七四式電子観測儀を再起動してください。", "CefEOBrowser");
+                        break;
+                }
                 Cef.Shutdown();
             }
             else
@@ -512,7 +632,15 @@ namespace CefEOBrowser
             }
             catch (Exception ex)
             {
-                SendErrorReport(ex.ToString(), "スタイルシートの適用に失敗しました。");
+                switch (BrowserUILanguage)
+                {
+                    case "zh":
+                        SendErrorReport(ex.ToString(), "应用样式表失败。");
+                        break;
+                    default:
+                        SendErrorReport(ex.ToString(), "スタイルシートの適用に失敗しました。");
+                        break;
+                }
             }
             
         }
@@ -536,7 +664,15 @@ namespace CefEOBrowser
             }
             catch (Exception ex)
             {
-                SendErrorReport(ex.ToString(), "DMMによるページ更新ダイアログの非表示に失敗しました。");
+                switch (BrowserUILanguage)
+                {
+                    case "zh":
+                        SendErrorReport(ex.ToString(), "屏蔽 DMM 刷新提示对话框失败。");
+                        break;
+                    default:
+                        SendErrorReport(ex.ToString(), "DMMによるページ更新ダイアログの非表示に失敗しました。");
+                        break;
+                }
             }
         }
 
@@ -690,9 +826,25 @@ namespace CefEOBrowser
 
         private void ToolMenu_NavigateToLogInPage_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("ログインページへ移動します。\r\nよろしいですか？", "確認",
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
-                == System.Windows.Forms.DialogResult.OK)
+            DialogResult result;
+            switch (BrowserUILanguage)
+            {
+                case "zh":
+                    result = MessageBox.Show(
+                        "即将转到登录页。\r\n确定跳转吗？", "要求确认",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2);
+                    break;
+                default:
+                    result = MessageBox.Show(
+                        "ログインページへ移動します。\r\nよろしいですか？", "確認",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2);
+                    break;
+            }
+            if (result == DialogResult.OK)
             {
                 Navigate(Configuration.LogInPageURL);
             }
@@ -829,13 +981,30 @@ namespace CefEOBrowser
 
         private void ToolMenu_Other_Refresh_Click(object sender, EventArgs e)
         {
-            if (!Configuration.ConfirmAtRefresh ||
-                MessageBox.Show("再読み込みします。\r\nよろしいですか？", "確認",
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2)
-                == System.Windows.Forms.DialogResult.OK)
+            if (Configuration.ConfirmAtRefresh)
             {
-                RefreshBrowser();
+                DialogResult result;
+                switch (BrowserUILanguage)
+                {
+                    case "zh":
+                        result = MessageBox.Show(
+                            "即将刷新页面。\r\n确定刷新吗？", "要求确认",
+                            MessageBoxButtons.OKCancel,
+                            MessageBoxIcon.Exclamation,
+                            MessageBoxDefaultButton.Button2);
+                        break;
+                    default:
+                        result = MessageBox.Show(
+                            "再読み込みします。\r\nよろしいですか？", "確認",
+                            MessageBoxButtons.OKCancel,
+                            MessageBoxIcon.Exclamation,
+                            MessageBoxDefaultButton.Button2);
+                        break;
+                }
+                if (result != DialogResult.OK)
+                    return;
             }
+            RefreshBrowser();
         }
 
         private void ToolMenu_Other_ScreenShot_Click(object sender, EventArgs e)
