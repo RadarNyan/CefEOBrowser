@@ -339,6 +339,16 @@ namespace CefEOBrowser
                 }
             }
 
+            try
+            {
+                using (var reg = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING\"))
+                {
+                    if (!(reg?.GetValue("EOBrowser.exe") is int gpu) || gpu == 0)
+                        settings.DisableGpuAcceleration();
+                }
+            }
+            catch (Exception ex) { }
+
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
 
             Browser = new ChromiumWebBrowser(url) {
