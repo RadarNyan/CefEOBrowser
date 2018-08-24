@@ -325,6 +325,19 @@ namespace CefEOBrowser
             };
             settings.CefCommandLineArgs.Add("proxy-server", proxy);
 
+            var nogpu = Directory.EnumerateFiles(cef_path, "nogpu*");
+            if (nogpu.Any()) {
+                settings.DisableGpuAcceleration();
+                switch (BrowserUILanguage) {
+                    case "zh":
+                        AddLog(2, $"检测到文件 {nogpu.FirstOrDefault()}，GPU 加速已禁用。");
+                        break;
+                    default:
+                        AddLog(2, $"{nogpu.FirstOrDefault()} を検出されました、GPU アクセラレーションを無効にする。");
+                        break;
+                }
+            }
+
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
 
             Browser = new ChromiumWebBrowser(url) {
