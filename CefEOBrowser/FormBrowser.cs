@@ -546,15 +546,7 @@ namespace CefEOBrowser
                 return;
 
             try {
-                /*
-                var document = Browser.Document;
-                if (document == null) return;
-
-                var swf = getFrameElementById(document, "externalswf");
-                if (swf == null) return;
-
-                document.InvokeScript("eval", new object[] { Properties.Resources.DMMScript });
-                */
+                Browser.GetBrowser().MainFrame.ExecuteJavaScriptAsync(Properties.Resources.DestroyDMMPopup_JS);
             }
             catch (Exception ex) {
                 switch (BrowserUILanguage) {

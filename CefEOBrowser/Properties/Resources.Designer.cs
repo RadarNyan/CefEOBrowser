@@ -61,6 +61,15 @@ namespace CefEOBrowser.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DMM.netgame.reloadDialog=function(){};.
+        /// </summary>
+        internal static string DestroyDMMPopup_JS {
+            get {
+                return ResourceManager.GetString("DestroyDMMPopup_JS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function applyStyle(){{var e=document.getElementById(&quot;{0}&quot;);e&amp;&amp;document.head.removeChild(e),(e=document.createElement(&quot;style&quot;)).id=&quot;{0}&quot;,e.innerHTML=&quot;#flashWrap {{ position: fixed; left: 0; top: 0; width: 100%; height: 100%; }} #htmlWrap {{ width: 100% !important; height: 100% !important; }} #sectionWrap {{ display:none !important; }}&quot;,document.head.appendChild(e)}}&quot;loading&quot;===document.readyState?document.addEventListener(&quot;DOMContentLoaded&quot;,applyStyle):applyStyle();.
         /// </summary>
         internal static string Frame_JS {
