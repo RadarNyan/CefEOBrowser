@@ -462,7 +462,8 @@ namespace CefEOBrowser
                     } else {
                         zoomFactor = maxWidth * 1.00 / KanColleSize.Width;
                     }
-                    if (1.0 < zoomFactor && zoomFactor < 1.05)
+                    if ((1.0 < zoomFactor && zoomFactor <= 1.01) ||
+                        (1.0 > zoomFactor && zoomFactor >= 0.99))
                         zoomFactor = 1;
                 } else {
                     if (zoomRate == 66) {
