@@ -50,13 +50,14 @@ namespace CefEOBrowser
                     ToolMenu_Other_NavigateToLogInPage.Text = "转到登录页(&L)";
                     ToolMenu_Other_Navigate.Text = "转到网址(&N)...";
                     ToolMenu_Other_AppliesStyleSheet.Text = "应用样式表";
-                    ToolMenu_Other_ClearCache.Text = "清除缓存(&C)";
+                    ToolMenu_Other_ClearCache.Text = "清除缓存";
                     ToolMenu_Other_Alignment.Text = "工具条位置(&A)";
                     ToolMenu_Other_Alignment_Top.Text = "上(&T)";
                     ToolMenu_Other_Alignment_Bottom.Text = "下(&B)";
                     ToolMenu_Other_Alignment_Left.Text = "左(&L)";
                     ToolMenu_Other_Alignment_Right.Text = "右(&R)";
                     ToolMenu_Other_Alignment_Invisible.Text = "隐藏(&I)";
+                    ToolMenu_Other_ChromiumDevTools.Text = "Chromium 开发者工具(&D)";
                     break;
                 default:
                     // Default UI language is Japanese
@@ -727,7 +728,7 @@ namespace CefEOBrowser
             Cef.Shutdown();
         }
 
-        private void ToolMenu_NavigateToLogInPage_Click(object sender, EventArgs e)
+        private void ToolMenu_Other_NavigateToLogInPage_Click(object sender, EventArgs e)
         {
             DialogResult result;
             switch (BrowserUILanguage) {
@@ -936,13 +937,67 @@ namespace CefEOBrowser
 
         private void ToolMenu_Other_ClearCache_Click(object sender, EventArgs e)
         {
-            Browser.ShowDevTools();
+            switch (BrowserUILanguage) {
+                case "zh":
+                    MessageBox.Show(
+                        "不支持运行中清除缓存。\r\n" +
+                        "请退出七四式电子观测仪并手动删除以下目录：\r\n\r\n" +
+                        "\tCefEOBrowser\\cache\\Cache", "CefEOBrowser");
+                    break;
+                default:
+                    MessageBox.Show(
+                        "実行中のキャッシュクリアはサポートされていません。\r\n" +
+                        "七四式電子観測儀を終了し、下記のフォルダを削除してください：\r\n\r\n" +
+                        "\tCefEOBrowser\\cache\\Cache", "CefEOBrowser");
+                    break;
+            }
         }
 
         private void ToolMenu_Other_DropDownOpening(object sender, EventArgs e)
         {
             var list = ToolMenu_Zoom.DropDownItems.Cast<ToolStripItem>().ToArray();
             ToolMenu_Other_Zoom.DropDownItems.AddRange(list);
+        }
+
+        private void ToolMenu_Other_ChromiumDevTools_Click(object sender, EventArgs e)
+        {
+            if (Cef.IsInitialized)
+                Browser.ShowDevTools();
+        }
+
+        private void ToolMenu_Other_LastScreenShot_OpenScreenShotFolder_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(Configuration.ScreenShotPath))
+                System.Diagnostics.Process.Start(Configuration.ScreenShotPath);
+        }
+
+        private void ToolMenu_Other_LastScreenShot_CopyToClipboard_Click(object sender, EventArgs e)
+        {
+            if (_lastScreenShotPath != null && System.IO.File.Exists(_lastScreenShotPath)) {
+                try {
+                    using (var img = new Bitmap(_lastScreenShotPath)) {
+                        Clipboard.SetImage(img);
+                        switch (BrowserUILanguage) {
+                            case "zh":
+                                AddLog(2, $"已复制截图 {_lastScreenShotPath} 到剪贴板。");
+                                break;
+                            default:
+                                AddLog(2, $"スクリーンショット {_lastScreenShotPath} をクリップボードにコピーしました。");
+                                break;
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    switch (BrowserUILanguage) {
+                        case "zh":
+                            SendErrorReport(ex.ToString(), "复制截图到剪贴板失败。");
+                            break;
+                        default:
+                            SendErrorReport(ex.ToString(), "スクリーンショットのクリップボードへのコピーに失敗しました。");
+                            break;
+                    }
+                }
+            }
         }
     }
 
