@@ -906,8 +906,7 @@ namespace CefEOBrowser
 
         private void ContextMenuTool_ShowToolMenu_Click(object sender, EventArgs e)
         {
-            ToolMenu.Visible =
-            Configuration.IsToolMenuVisible = true;
+            ToolMenu.Visible = Configuration.IsToolMenuVisible = !ToolMenu.Visible;
             ConfigurationUpdated();
         }
 
