@@ -10,8 +10,6 @@ using CefSharp.WinForms;
 using BrowserLib;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
-using System.Text;
-using System.Text.RegularExpressions;
 using Codeplex.Data;
 
 namespace CefEOBrowser
