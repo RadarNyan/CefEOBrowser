@@ -10,8 +10,6 @@ using CefSharp.WinForms;
 using BrowserLib;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
-using System.Text;
-using System.Text.RegularExpressions;
 using Codeplex.Data;
 
 namespace CefEOBrowser
@@ -532,7 +530,7 @@ namespace CefEOBrowser
                 }
 
                 double zoomLevel = Math.Log(zoomFactor, 1.2);
-                if (Cef.IsInitialized)
+                if (Cef.IsInitialized && Browser.IsBrowserInitialized)
                     Browser.SetZoomLevel(zoomLevel);
 
                 if (StyleSheetApplied) {
@@ -908,8 +906,7 @@ namespace CefEOBrowser
 
         private void ContextMenuTool_ShowToolMenu_Click(object sender, EventArgs e)
         {
-            ToolMenu.Visible =
-            Configuration.IsToolMenuVisible = true;
+            ToolMenu.Visible = Configuration.IsToolMenuVisible = !ToolMenu.Visible;
             ConfigurationUpdated();
         }
 
@@ -1014,7 +1011,7 @@ namespace CefEOBrowser
 
         private void ToolMenu_Other_ChromiumDevTools_Click(object sender, EventArgs e)
         {
-            if (Cef.IsInitialized)
+            if (Cef.IsInitialized && Browser.IsBrowserInitialized)
                 Browser.ShowDevTools();
         }
 

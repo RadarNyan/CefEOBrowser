@@ -78,6 +78,8 @@
             this.ToolMenu_Other_NavigateToLogInPage = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_Navigate = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_OpenInNewWindow = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolMenu_Other_OpenInNewWindow_EnterUrl = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other_AppliesStyleSheet = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolMenu_Other_ClearCache = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,8 +92,6 @@
             this.ToolMenu_Other_Alignment_Invisible = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolMenu_Other_ChromiumDevTools = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolMenu_Other_OpenInNewWindow_EnterUrl = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
             this.ContextMenuTool.SuspendLayout();
             this.ToolMenu.SuspendLayout();
             this.SuspendLayout();
@@ -112,12 +112,13 @@
             this.ContextMenuTool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ContextMenuTool_ShowToolMenu});
             this.ContextMenuTool.Name = "ContextMenuTool";
-            this.ContextMenuTool.Size = new System.Drawing.Size(195, 26);
+            this.ContextMenuTool.Size = new System.Drawing.Size(220, 48);
             // 
             // ContextMenuTool_ShowToolMenu
             // 
             this.ContextMenuTool_ShowToolMenu.Name = "ContextMenuTool_ShowToolMenu";
-            this.ContextMenuTool_ShowToolMenu.Size = new System.Drawing.Size(194, 22);
+            this.ContextMenuTool_ShowToolMenu.ShortcutKeys = System.Windows.Forms.Keys.F11;
+            this.ContextMenuTool_ShowToolMenu.Size = new System.Drawing.Size(219, 22);
             this.ContextMenuTool_ShowToolMenu.Text = "ツールメニューを表示";
             this.ContextMenuTool_ShowToolMenu.Click += new System.EventHandler(this.ContextMenuTool_ShowToolMenu_Click);
             // 
@@ -483,6 +484,18 @@
             this.ToolMenu_Other_OpenInNewWindow.Size = new System.Drawing.Size(259, 22);
             this.ToolMenu_Other_OpenInNewWindow.Text = "新しいウィンドウで開く";
             // 
+            // toolStripSeparator17
+            // 
+            this.toolStripSeparator17.Name = "toolStripSeparator17";
+            this.toolStripSeparator17.Size = new System.Drawing.Size(137, 6);
+            // 
+            // ToolMenu_Other_OpenInNewWindow_EnterUrl
+            // 
+            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Name = "ToolMenu_Other_OpenInNewWindow_EnterUrl";
+            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Size = new System.Drawing.Size(140, 22);
+            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Text = "URLを入力...";
+            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Click += new System.EventHandler(this.ToolMenu_Other_OpenInNewWindow_EnterUrl_Click);
+            // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
@@ -566,18 +579,6 @@
             this.ToolMenu_Other_ChromiumDevTools.Size = new System.Drawing.Size(259, 22);
             this.ToolMenu_Other_ChromiumDevTools.Text = "Chromium デベロッパーツール(&D)";
             this.ToolMenu_Other_ChromiumDevTools.Click += new System.EventHandler(this.ToolMenu_Other_ChromiumDevTools_Click);
-            // 
-            // ToolMenu_Other_OpenInNewWindow_EnterUrl
-            // 
-            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Name = "ToolMenu_Other_OpenInNewWindow_EnterUrl";
-            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Size = new System.Drawing.Size(180, 22);
-            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Text = "URLを入力...";
-            this.ToolMenu_Other_OpenInNewWindow_EnterUrl.Click += new System.EventHandler(this.ToolMenu_Other_OpenInNewWindow_EnterUrl_Click);
-            // 
-            // toolStripSeparator17
-            // 
-            this.toolStripSeparator17.Name = "toolStripSeparator17";
-            this.toolStripSeparator17.Size = new System.Drawing.Size(177, 6);
             // 
             // FormBrowser
             // 
