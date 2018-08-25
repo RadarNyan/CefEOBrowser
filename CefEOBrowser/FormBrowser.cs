@@ -530,7 +530,7 @@ namespace CefEOBrowser
                 }
 
                 double zoomLevel = Math.Log(zoomFactor, 1.2);
-                if (Cef.IsInitialized)
+                if (Cef.IsInitialized && Browser.IsBrowserInitialized)
                     Browser.SetZoomLevel(zoomLevel);
 
                 if (StyleSheetApplied) {
@@ -1012,7 +1012,7 @@ namespace CefEOBrowser
 
         private void ToolMenu_Other_ChromiumDevTools_Click(object sender, EventArgs e)
         {
-            if (Cef.IsInitialized)
+            if (Cef.IsInitialized && Browser.IsBrowserInitialized)
                 Browser.ShowDevTools();
         }
 
