@@ -82,10 +82,19 @@
     <Compile Include="FormBrowser.Designer.cs">
       <DependentUpon>FormBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormPopupBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormPopupBrowser.Designer.cs">
+      <DependentUpon>FormPopupBrowser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormBrowser.resx">
       <DependentUpon>FormBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormPopupBrowser.resx">
+      <DependentUpon>FormPopupBrowser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -97,6 +106,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="CefEOBrowser\bookmarks.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -112,9 +124,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CefEOBrowser\html\default.htm">
+    <None Include="CefEOBrowser\html\default.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BrowserLib\BrowserLib.csproj">
