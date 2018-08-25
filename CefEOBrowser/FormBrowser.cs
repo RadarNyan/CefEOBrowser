@@ -10,6 +10,9 @@ using CefSharp.WinForms;
 using BrowserLib;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
+using System.Text;
+using System.Text.RegularExpressions;
+using Codeplex.Data;
 
 namespace CefEOBrowser
 {
@@ -49,6 +52,8 @@ namespace CefEOBrowser
                     ToolMenu_Other_Refresh.Text = "刷新(&R)";
                     ToolMenu_Other_NavigateToLogInPage.Text = "转到登录页(&L)";
                     ToolMenu_Other_Navigate.Text = "转到网址(&N)...";
+                    ToolMenu_Other_OpenInNewWindow.Text = "在新窗口打开";
+                    ToolMenu_Other_OpenInNewWindow_EnterUrl.Text = "输入网址...";
                     ToolMenu_Other_AppliesStyleSheet.Text = "应用样式表";
                     ToolMenu_Other_ClearCache.Text = "清除缓存";
                     ToolMenu_Other_Alignment.Text = "工具条位置(&A)";
@@ -174,6 +179,46 @@ namespace CefEOBrowser
             HeartbeatTimer.Start();
 
             BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.GetIconResource());
+
+            // Add Bookmark Sites to Menu
+            try {
+                string s = String.Empty;
+                var bookmarkFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CefEOBrowser\bookmarks.json");
+                using (StreamReader sr = File.OpenText(bookmarkFilePath)) {
+                    s = sr.ReadToEnd();
+                }
+                var sites = DynamicJson.Parse(s);
+                int count = 0;
+                foreach (var site in sites) {
+                    var control = new ToolStripMenuItem();
+                    control.Text = site.title;
+                    control.ToolTipText = site.url;
+
+                    int width = 1200;
+                    int height = 700;
+                    string fontName = "Meiryo";
+                    if (site.width())
+                        width = (int)site.width;
+                    if (site.height())
+                        height = (int)site.height;
+                    if (site.font())
+                        fontName = site.font;
+
+                    control.Click += (s1, e1) => OpenInPopupBrowser(site.url, site.title, width, height, fontName);
+                    ToolMenu_Other_OpenInNewWindow.DropDownItems.Insert(count, control);
+                    count++;
+                }
+            }
+            catch (Exception ex) {
+                switch (BrowserUILanguage) {
+                    case "zh":
+                        AddLog(2, $"读取书签文件失败。{ex}");
+                        break;
+                    default:
+                        AddLog(2, $"ブックマークファイルの読み込みに失敗しました。{ex}");
+                        break;
+                }
+            }
         }
 
         private BrowserConfiguration Configuration;
@@ -389,8 +434,14 @@ namespace CefEOBrowser
             Browser.Reload();
         }
 
+        private bool navigateNewWindow = false;
+
         public void Navigate(string url)
         {
+            if (navigateNewWindow) {
+                OpenInPopupBrowser(url);
+                return;
+            }
             GamePageLoaded = false;
             StyleSheetApplied = false;
             if (url != KanColleUrl && Browser.Address != Configuration.LogInPageURL)
@@ -748,6 +799,7 @@ namespace CefEOBrowser
                     break;
             }
             if (result == DialogResult.OK) {
+                navigateNewWindow = false;
                 Navigate(Configuration.LogInPageURL);
             }
         }
@@ -932,6 +984,7 @@ namespace CefEOBrowser
 
         private void ToolMenu_Other_Navigate_Click(object sender, EventArgs e)
         {
+            navigateNewWindow = false;
             BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.RequestNavigation(Browser.Address));
         }
 
@@ -998,6 +1051,27 @@ namespace CefEOBrowser
                     }
                 }
             }
+        }
+
+        private void OpenInPopupBrowser(string url)
+        {
+            OpenInPopupBrowser(url, url, 1200, 700, "Meiryo");
+        }
+
+        private void OpenInPopupBrowser(string url, string title, int width, int height, string fontName)
+        {
+            var FormPopupBrowser = new FormPopupBrowser(title, width, height);
+            var PopupBrowser = new ChromiumWebBrowser(url);
+            PopupBrowser.BrowserSettings.StandardFontFamily = fontName;
+            PopupBrowser.Dock = DockStyle.Fill;
+            FormPopupBrowser.Controls.Add(PopupBrowser);
+            FormPopupBrowser.Show(this);
+        }
+
+        private void ToolMenu_Other_OpenInNewWindow_EnterUrl_Click(object sender, EventArgs e)
+        {
+            navigateNewWindow = true;
+            BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.RequestNavigation(""));
         }
     }
 
