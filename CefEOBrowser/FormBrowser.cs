@@ -358,6 +358,7 @@ namespace CefEOBrowser
             CefLibraryHandle libraryLoader = new CefLibraryHandle(Path.Combine(cef_path, @"bin\libcef.dll"));
 
             CefSettings settings = new CefSettings() {
+                //LogFile = Path.Combine(cef_path, @"debug.log"),
                 CachePath = Path.Combine(cef_path, @"cache"),
                 UserDataPath = Path.Combine(cef_path, @"userdata"),
                 ResourcesDirPath = Path.Combine(cef_path, @"bin"),
@@ -1253,17 +1254,39 @@ namespace CefEOBrowser
     }
 
     /// <summary>
-    /// Cancel Requests to "rt.gsspat.jp" ("white Screen" workaround)
+    /// BrowserRequestHandler
     /// </summary>
     public class BrowserRequestHandler : CefSharp.Handler.DefaultRequestHandler
     {
+        public override IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IRequest request, IResponse response)
+        {
+            // Can modify responses here
+            return null;
+        }
+
         public override CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
         {
+            // Temporary Disabled
+            return CefReturnValue.Continue;
+
+            // Cancel Requests to "rt.gsspat.jp" ("white Screen" workaround)
             if (request.Url.Contains("rt.gsspat.jp")) {
                 return CefReturnValue.Cancel;
             } else {
                 return CefReturnValue.Continue;
             }
+        }
+
+        public override void OnRenderProcessTerminated(IWebBrowser browserControl, CefSharp.IBrowser browser, CefTerminationStatus status)
+        {
+            MessageBox.Show(
+                "ブラウザのレンダリングプロセスが予期せず終了しました。\r\n" +
+                "ページをリロードします。\r\n\r\n" +
+                "浏览器渲染进程已崩溃，即将重新载入页面。\r\n\r\n" +
+                $"\t{status.ToString()}", "CefEOBrowser",
+                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            browserControl.Reload();
         }
     }
 }
