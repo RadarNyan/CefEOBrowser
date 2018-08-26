@@ -1266,9 +1266,6 @@ namespace CefEOBrowser
 
         public override CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
         {
-            // Temporary Disabled
-            return CefReturnValue.Continue;
-
             // Cancel Requests to "rt.gsspat.jp" ("white Screen" workaround)
             if (request.Url.Contains("rt.gsspat.jp")) {
                 return CefReturnValue.Cancel;
