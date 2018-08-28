@@ -1,9 +1,18 @@
 # CefEOBrowser
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1qcyyjtf64ohk6mu?svg=true)](https://ci.appveyor.com/project/RadarNyan/cefeobrowser)
+### Project Cancelled (2018, August 28th)
+This project will no longer be developed as original [ElectronicObserver](https://github.com/andanteyk/ElectronicObserver) will adopt Cef as the new browser with future release 4.0, hence this project is not needed anymore.
+
+__That being said, you can still use this project with ElectronicObserver 3.X with no problem.__
+
+I will continue contribute improvements to the original ElectronicObserver project, see you there :)
+
+
+---
+
 #### Cef based Browser for ElectronicObserver
-This is a drop-in replacement EOBrowser.exe for [ElectronicObserver](https://github.com/andanteyk/ElectronicObserver)  
-This project is now part of [my fork of ElectronicObserver](https://github.com/RadarNyan/ElectronicObserver)
+This is a drop-in replacement EOBrowser.exe for [ElectronicObserver](https://github.com/andanteyk/ElectronicObserver)
 
 #### Introduction
 Since August 2018, KanColle enters 2nd Sequence, which moved from Flash to HTML5, dropping support for Internet Explorer. So I restarted my once abandoned project to make it possible for ElectronicObserver to utilize Chromium as its browser.
