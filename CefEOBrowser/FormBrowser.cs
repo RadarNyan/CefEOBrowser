@@ -316,13 +316,14 @@ namespace CefEOBrowser
             ConfigurationUpdated();
         }
 
+		public string BrowserProxy;
+
         public void SetProxy(string proxy)
         {
-            string proxy_cef;
             if (ushort.TryParse(proxy, out ushort port)) {
-                proxy_cef = "http=127.0.0.1:" + port;
+				BrowserProxy = "http=127.0.0.1:" + port;
             } else {
-                proxy_cef = proxy;
+				BrowserProxy = proxy;
             }
 
             if (Cef.IsInitialized) {
@@ -341,9 +342,9 @@ namespace CefEOBrowser
                 Cef.Shutdown();
             } else {
                 if (Configuration.IsEnabled) {
-                    InitializeChromium(proxy_cef, Configuration.LogInPageURL);
+                    InitializeChromium(Configuration.LogInPageURL);
                 } else {
-                    InitializeChromium(proxy_cef, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CefEOBrowser\html\default.htm"));
+                    InitializeChromium(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CefEOBrowser\html\default.htm"));
                 }
             }
 
@@ -352,7 +353,9 @@ namespace CefEOBrowser
 
         public ChromiumWebBrowser Browser;
 
-        private void InitializeChromium(string proxy, string url)
+		public string BrowserUA = @"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36";
+
+		private void InitializeChromium(string url)
         {
             var cef_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"CefEOBrowser");
             CefLibraryHandle libraryLoader = new CefLibraryHandle(Path.Combine(cef_path, @"bin\libcef.dll"));
@@ -368,7 +371,7 @@ namespace CefEOBrowser
                 AcceptLanguageList = "ja-JP",
                 LogSeverity = LogSeverity.Disable
             };
-            settings.CefCommandLineArgs.Add("proxy-server", proxy);
+            settings.CefCommandLineArgs.Add("proxy-server", BrowserProxy);
 
             var nogpu = Directory.EnumerateFiles(cef_path, "nogpu*");
             if (nogpu.Any()) {
@@ -383,7 +386,14 @@ namespace CefEOBrowser
                 }
             }
 
+			settings.RegisterScheme(new CefCustomScheme {
+				SchemeName = "kcs2cache",
+				SchemeHandlerFactory = new CacheProtocolSchemeHandlerFactory(this),
+			});
+
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
+
+			Cef.AddCrossOriginWhitelistEntry("http://125.6.189.247", "kcs2cache", "125.6.189.247", false);
 
             Browser = new ChromiumWebBrowser(url) {
                 FocusHandler = null,
@@ -519,7 +529,7 @@ namespace CefEOBrowser
                     } else {
                         zoomFactor = maxWidth * 1.00 / KanColleSize.Width;
                     }
-                    if ((1.0 < zoomFactor && zoomFactor <= 1.01) ||
+                    if ((1.0 < zoomFactor && zoomFactor <= 1.04) ||
                         (1.0 > zoomFactor && zoomFactor >= 0.99))
                         zoomFactor = 1;
                 } else {
@@ -741,7 +751,7 @@ namespace CefEOBrowser
             BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.ConfigurationUpdated(Configuration));
         }
 
-        private void AddLog(int priority, string message)
+        public void AddLog(int priority, string message)
         {
             BrowserHost.AsyncRemoteRun(() => BrowserHost.Proxy.AddLog(priority, message));
         }
@@ -1266,8 +1276,18 @@ namespace CefEOBrowser
 
         public override CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, CefSharp.IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
         {
+			// Cacher
+			Uri uri = new Uri(request.Url);
+			var path = uri.AbsolutePath;
+			if (!path.EndsWith(@".json") &&
+				(path.StartsWith("/kcs2/resources") || path.StartsWith("/kcs2/img") || path.StartsWith("/kcs/sound"))
+			) {
+				request.Url = request.Url.Replace("http://", "kcs2cache://");
+				return CefReturnValue.Continue;
+			}
+
             // Cancel Requests to "rt.gsspat.jp" ("white Screen" workaround)
-            if (request.Url.Contains("rt.gsspat.jp")) {
+            if (uri.Host == "rt.gsspat.jp") {
                 return CefReturnValue.Cancel;
             } else {
                 return CefReturnValue.Continue;
